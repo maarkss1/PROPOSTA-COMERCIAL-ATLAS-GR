@@ -623,10 +623,11 @@ table.pricing td.detail{font-size:10.5px;line-height:1.4;}
 <div class="sidebar-panel collapsed" id="sidebarPanel">
 <div class="sidebar-title">Ferramentas
 <div style="background:#fff7f2; border:1px solid #ffd8c2; padding:10px; border-radius:8px; margin-top:6px; font-size:11px;">
-  <b style="color:var(--atlas-orange); display:block; margin-bottom:4px;">ðŸ” Buscar no Bitrix24:</b>
+  <b style="color:var(--atlas-orange); display:block; margin-bottom:4px;">🔍 Buscar no Bitrix24:</b>
   <input type="text" id="bxSideSearch" placeholder="Nome do cliente..." style="width:100%; border:1px solid #ccc; padding:4px 6px; border-radius:4px; font-size:11px; font-family:'Montserrat',Arial,sans-serif; margin-bottom:4px;">
   <button type="button" onclick="buscarBitrixSidebar()" style="width:100%; background:var(--atlas-orange); color:#fff; border:none; padding:4px 8px; border-radius:4px; font-weight:700; cursor:pointer; font-size:11px; font-family:'Montserrat',Arial,sans-serif;">Buscar Cliente</button>
   <select id="bxSideResults" style="display:none; width:100%; border:1px solid #ccc; padding:4px; border-radius:4px; font-size:11px; margin-top:4px; font-family:'Montserrat',Arial,sans-serif;" onchange="selecionarBitrixSidebar()"></select>
+  <button type="button" id="bxCopyBtn" onclick="copiarBitrixSidebar()" style="display:none; width:100%; background:#fff; color:var(--atlas-orange); border:1px solid var(--atlas-orange); padding:4px 8px; border-radius:4px; font-weight:700; cursor:pointer; font-size:11px; font-family:'Montserrat',Arial,sans-serif; margin-top:4px;">Copiar Dados</button>
 </div>
 </div>
 <button class="print-btn" onclick="window.print()" title="Imprimir ou salvar como PDF">
@@ -919,10 +920,18 @@ function baixarPropostaPreenchida(){
     if(!checkedRows[tr.dataset.row]) tr.remove();
   });
   clone.querySelectorAll('.add-range-btn, .remove-range-btn').forEach(function(el){ el.remove(); });
+  var sidebarClone = clone.querySelector('#appSidebar');
+  if(sidebarClone) sidebarClone.remove();
+  var bodyClone = clone.querySelector('body');
+  if(bodyClone){ bodyClone.style.paddingLeft = '0'; bodyClone.classList.remove('sidebar-expanded'); }
   var bitrixBtnClone = clone.querySelector('.bitrix-btn');
   if(bitrixBtnClone) bitrixBtnClone.remove();
   var bitrixModalClone = clone.querySelector('.bitrix-modal-overlay');
   if(bitrixModalClone) bitrixModalClone.remove();
+  var bitrixSyncScriptClone = clone.querySelector('#bitrixSyncScript');
+  if(bitrixSyncScriptClone) bitrixSyncScriptClone.remove();
+  var bitrixSearchScriptClone = clone.querySelector('#bitrixSearchScript');
+  if(bitrixSearchScriptClone) bitrixSearchScriptClone.remove();
 
   clone.querySelectorAll('.valor-input, .qtde-input').forEach(function(el){
     el.setAttribute('readonly', '');
@@ -932,18 +941,20 @@ function baixarPropostaPreenchida(){
     el.classList.add('pw-locked');
   });
   var planPickerClone = clone.querySelector('#plan-picker');
-  if(planPickerClone && planPickerClone.value){
+  if(planPickerClone){
     planPickerClone.classList.add('pw-locked');
   }
   clone.querySelectorAll('[contenteditable="true"]').forEach(function(el){
-    if(!isBlankLockField(el)){
-      el.setAttribute('contenteditable', 'false');
-      el.classList.add('pw-locked');
+    var isSigLine = el.matches('.sig-field .rule, .fone-seg, .sig-date .u');
+    if(!isSigLine && isBlankLockField(el)){
+      el.textContent = '';
     }
+    el.setAttribute('contenteditable', 'false');
+    el.classList.add('pw-locked');
   });
 
   var lockStyle = document.createElement('style');
-  lockStyle.textContent = '.pw-locked{cursor:not-allowed !important;}input.pw-locked,select.pw-locked{background:#f4f4f4 !important;color:#888 !important;}';
+  lockStyle.textContent = '.pw-locked{cursor:not-allowed !important;}.editable-field{border-bottom:none !important;background:transparent !important;padding:0 !important;}.editable-cell{background:transparent !important;}.valor-input,.qtde-input{border-bottom:none !important;background:transparent !important;}.sig-field .rule,.fone-seg,.sig-date .u{border-bottom:1.6px solid #161616 !important;background:transparent !important;}.doc{zoom:1.08;}';
   clone.querySelector('head').appendChild(lockStyle);
 
   var lockScript = document.createElement('script');
@@ -1023,7 +1034,7 @@ document.querySelectorAll('.row-toggle').forEach(function(cb){
 <div class="bitrix-status" id="bitrixStatus"></div>
 </div>
 </div>
-<script>
+<script id="bitrixSyncScript">
 var BITRIX_WEBHOOK_URL = 'https://atlasgr.bitrix24.com.br/rest/450/xa4srbrft9jpe880/';
 
 function extrairCampoPorRotulo(rotulo){
@@ -1478,7 +1489,7 @@ function toggleSidebar(){
   document.body.classList.toggle('sidebar-expanded');
 }
 </script>
-<script>
+<script id="bitrixSearchScript">
 var atlasBxWebhook = "https://atlasgr.bitrix24.com.br/rest/450/gr94fas79p1nizci/";
 
 function buscarBitrixSidebar() {
@@ -1552,7 +1563,7 @@ function buscarBitrixSidebar() {
         count++;
         var opt = document.createElement('option');
         opt.value = d.ID;
-        opt.textContent = '[NegÃ³cio] ' + d.TITLE;
+        opt.textContent = '[Negócio] ' + d.TITLE;
         opt.dataset.type = 'deal';
         opt.dataset.title = d.TITLE;
         opt.dataset.companyId = d.COMPANY_ID || '';
@@ -1593,7 +1604,10 @@ function selecionarBitrixSidebar() {
   if(!id) return;
   var opt = sel.options[sel.selectedIndex];
   var title = opt.dataset.title || opt.text;
-  
+
+  var copyBtn = document.getElementById('bxCopyBtn');
+  if(copyBtn) copyBtn.style.display = 'block';
+
   var elNome = document.getElementById('cover-client-field');
   if(elNome) {
     elNome.textContent = title;
@@ -1628,6 +1642,26 @@ function selecionarBitrixSidebar() {
       }
     }
   }).catch(function(){});
+}
+
+function copiarBitrixSidebar() {
+  var nomeEl = document.getElementById('cover-client-field');
+  var cnpjEl = document.getElementById('cover-cnpj-field');
+  var nome = nomeEl ? nomeEl.textContent.replace(/\u00a0/g, '').trim() : '';
+  var cnpj = cnpjEl ? cnpjEl.textContent.replace(/\u00a0/g, '').trim() : '';
+  var texto = 'Cliente: ' + nome + (cnpj ? ('\nCNPJ: ' + cnpj) : '');
+  var btn = document.getElementById('bxCopyBtn');
+  function done(ok){
+    if(!btn) return;
+    var original = 'Copiar Dados';
+    btn.textContent = ok ? 'Copiado!' : 'Erro ao copiar';
+    setTimeout(function(){ btn.textContent = original; }, 1500);
+  }
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(texto).then(function(){ done(true); }).catch(function(){ done(false); });
+  } else {
+    done(false);
+  }
 }
 </script>
 </body>

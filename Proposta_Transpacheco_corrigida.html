@@ -1,9 +1,8 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
-<head>
+<html lang="pt-BR"><head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Proposta Comercial — Torre de Controle Logística (Connect) — Atlas</title>
+<title>Proposta Comercial Completa — Atlas</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
 
@@ -310,6 +309,9 @@ body.sidebar-expanded{padding-left:250px;}
   .sig-pad{display:none !important;}
   .sig-pad-print-img{display:block !important;width:420px;height:120px;margin:0 auto;}
   .sig-clear-btn{display:none !important;}
+  .add-range-btn{display:none !important;}
+  .remove-range-btn{display:none !important;}
+  .row-range-select{display:none !important;}
 }
 
 /* ---------- COVER ---------- */
@@ -571,6 +573,12 @@ table.pricing td.detail{font-size:10.5px;line-height:1.4;}
   margin-bottom:10px;
 }
 .total-bar .tval{font-size:15px;}
+.row-range-select{display:block;margin:0 auto 3px;font-family:'Montserrat',Arial,sans-serif;font-size:9px;padding:1px 2px;border:1.2px dashed #e3a679;border-radius:4px;background:#fff4ee;color:#8a6a55;cursor:pointer;width:64px;}
+.row-range-select:focus{outline:none;border-color:var(--atlas-orange);border-style:solid;}
+.add-range-btn{display:block;margin:3px auto 0;width:16px;height:16px;line-height:13px;padding:0;font-size:11px;font-weight:800;border:1.2px solid #e3a679;border-radius:50%;background:#fff4ee;color:var(--atlas-orange);cursor:pointer;}
+.add-range-btn:hover{background:var(--atlas-orange);color:#fff;}
+table.pricing td.svc-repeat{font-weight:600;font-style:italic;color:#999;text-align:left;font-size:10.5px;}
+.remove-range-btn{background:none;border:none;color:#c0392b;font-size:10px;font-family:'Montserrat',Arial,sans-serif;cursor:pointer;text-decoration:underline;padding:0;}
 .obs-row{
   display:flex;justify-content:space-between;align-items:center;
   border:1px solid #ddd;background:#f4f2f1;
@@ -616,43 +624,9 @@ table.pricing td.detail{font-size:10.5px;line-height:1.4;}
   position:absolute;bottom:14px;right:20px;font-size:9px;color:#bbb;z-index:2;
 }
 </style>
-</head>
-<body>
-<div class="app-sidebar" id="appSidebar">
-<button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()" title="Mostrar/ocultar ferramentas"><span class="sidebar-toggle-icon">&#9776;</span><span class="sidebar-toggle-label">Imprimir / Salvar</span></button>
-<div class="sidebar-panel collapsed" id="sidebarPanel">
-<div class="sidebar-title">Ferramentas
-<div style="background:#fff7f2; border:1px solid #ffd8c2; padding:10px; border-radius:8px; margin-top:6px; font-size:11px;">
-  <b style="color:var(--atlas-orange); display:block; margin-bottom:4px;">🔍 Buscar no Bitrix24:</b>
-  <input type="text" id="bxSideSearch" placeholder="Nome do cliente..." style="width:100%; border:1px solid #ccc; padding:4px 6px; border-radius:4px; font-size:11px; font-family:'Montserrat',Arial,sans-serif; margin-bottom:4px;">
-  <button type="button" onclick="buscarBitrixSidebar()" style="width:100%; background:var(--atlas-orange); color:#fff; border:none; padding:4px 8px; border-radius:4px; font-weight:700; cursor:pointer; font-size:11px; font-family:'Montserrat',Arial,sans-serif;">Buscar Cliente</button>
-  <select id="bxSideResults" style="display:none; width:100%; border:1px solid #ccc; padding:4px; border-radius:4px; font-size:11px; margin-top:4px; font-family:'Montserrat',Arial,sans-serif;" onchange="selecionarBitrixSidebar()"></select>
-  <button type="button" id="bxCopyBtn" onclick="copiarBitrixSidebar()" style="display:none; width:100%; background:#fff; color:var(--atlas-orange); border:1px solid var(--atlas-orange); padding:4px 8px; border-radius:4px; font-weight:700; cursor:pointer; font-size:11px; font-family:'Montserrat',Arial,sans-serif; margin-top:4px;">Copiar Dados</button>
-</div>
-</div>
-<button class="print-btn" onclick="window.print()" title="Imprimir ou salvar como PDF">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
-  Imprimir
-</button>
-<button class="download-btn" onclick="baixarPropostaPreenchida()" title="Baixar HTML com os dados preenchidos">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-  Baixar
-</button>
-<button class="bitrix-btn" onclick="abrirVerificacaoBitrix()" title="Verificar dados e sincronizar com o Bitrix">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-  Sincronizar
-</button>
-<button class="mic-btn" id="micBtn" onclick="toggleDitado()" title="Clique no campo que deseja preencher, depois clique aqui e fale">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
-  <span id="micBtnLabel">Ditar</span>
-</button>
-<button class="voice-cmd-btn" id="voiceCmdBtn" onclick="toggleComandoVoz()" title="Ative e diga 'Atlas' seguido do comando, ex: Atlas, nome \u00e9 Fulano">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M8 12h.01M12 12h.01M16 12h.01"></path></svg>
-  <span id="voiceCmdLabel">Comando de Voz</span>
-</button>
-<div class="voice-cmd-status" id="voiceCmdStatus" style="display:none;"></div>
-</div>
-</div>
+<style>.pw-locked{cursor:not-allowed !important;}.editable-field{border-bottom:none !important;background:transparent !important;padding:0 !important;}.editable-cell{background:transparent !important;}.valor-input,.qtde-input{border-bottom:none !important;background:transparent !important;}.sig-field .rule,.fone-seg,.sig-date .u{border-bottom:1.6px solid #161616 !important;background:transparent !important;}.doc{zoom:1.08;}</style><style>.pw-locked{cursor:not-allowed !important;}.editable-field{border-bottom:none !important;background:transparent !important;padding:0 !important;}.editable-cell{background:transparent !important;}.valor-input,.qtde-input{border-bottom:none !important;background:transparent !important;}.sig-field .rule,.fone-seg,.sig-date .u{border-bottom:1.6px solid #161616 !important;background:transparent !important;}.doc{zoom:1.08;}</style></head>
+<body class="" style="padding-left: 0px;">
+
 <div class="doc">
 
 <div class="page cover">
@@ -662,7 +636,7 @@ table.pricing td.detail{font-size:10.5px;line-height:1.4;}
     <div class="cover-top-row">
       <div style="display:flex;align-items:center;gap:10px;">
         <img id="client-logo-img" class="client-logo-img" style="display:none;" alt="Logo do cliente">
-        <div id="cover-client-field" class="cover-client editable-field" contenteditable="true" spellcheck="false">[Nome do Cliente]</div>
+        <div id="cover-client-field" class="cover-client editable-field pw-locked" contenteditable="false" spellcheck="false">Transpacheco&nbsp;</div>
       </div>
       <div class="cover-divider"></div>
       <div style="text-align:right;">
@@ -670,9 +644,9 @@ table.pricing td.detail{font-size:10.5px;line-height:1.4;}
       </div>
     </div>
     <div class="cover-top-row" style="margin-top:6px;">
-      <div style="font-size:14px;">CNPJ:&nbsp;&nbsp;<span id="cover-cnpj-field" class="editable-field" contenteditable="true" spellcheck="false">XX.XXX.XXX/XXXX-XX</span></div>
+      <div style="font-size:14px;">CNPJ:&nbsp;&nbsp;<span id="cover-cnpj-field" class="editable-field pw-locked" contenteditable="false" spellcheck="false"></span></div>
       <div class="cover-divider" style="opacity:0;"></div>
-      <div class="cover-date-value editable-field auto-today-date" contenteditable="true" spellcheck="false" style="text-align:right;">XX de Novembro de 2026</div>
+      <div class="cover-date-value editable-field auto-today-date pw-locked" contenteditable="false" spellcheck="false" style="text-align:right;">26 de Agosto de 2026</div>
     </div>
   </div>
   <div class="cover-mid">
@@ -687,31 +661,31 @@ table.pricing td.detail{font-size:10.5px;line-height:1.4;}
     <h3>PROPÓSITO ATLAS</h3>
     <p>Conectamos pessoas e tecnologia, proporcionando segurança e inovação.</p>
   </div>
-</div><div class="page"><div class="inner"><div class="inner-diagonal"></div><div class="inner-diagonal-2"></div><div class="inner-content"><h2 class="sect">NOSSOS PRODUTOS</h2><h3 class="sub">Gerenciamento de Risco</h3><p class="body-text">Nosso produto de referência que tem como objetivo reduzir os altos índices de roubos, resultando em uma minimização de perdas financeiras para o setor de transportes. Toda Gestão de Riscos é desenvolvida através de medidas preventivas, com suporte de recursos tecnológicos de ponta e equipe especializada atendendo 24/7.</p><h3 class="sub">Software Logístico</h3><p class="body-text">O New Connect é nosso Software Logístico com um conjunto de soluções capaz de gerenciar todos os procedimentos de viagem através de alertas e eventos programados. Através do Atlas Analytics (B.I), você terá relatórios completos, proporcionando a otimização de recursos e redução de custos da sua operação.</p><p class="body-text">Com o Gestão à Vista trazemos indicadores de visualização da frota em Real Time, acompanhamento de viagens, controle de velocidade, mapa de viagem, indicador de tempo em pátio, progresso de viagem e controle de tempo de coletas e entregas.</p><h3 class="sub">Perfil Securitário</h3><p class="body-text">Nosso serviço de Cadastro e Consulta é um sistema 100% digital, responsável por toda análise de perfil de profissionais. Com atendimento 24 horas, garantimos agilidade e segurança máxima para otimizar a sua operação de contratação e verificação de antecedentes.</p><p class="body-text">Contamos com nossa Inteligência Artificial (IA), que realiza varreduras em bancos de dados oficiais, analisando todos os dados do consultado, como dados de pessoa física, processos trabalhistas, criminais ou penais e dados do veículo.</p></div></div></div><div class="page"><div class="inner"><div class="inner-diagonal"></div><div class="inner-diagonal-2"></div><div class="inner-content"><div class="plans-title">PLANO ESCOLHIDO</div><div class="plan-select-row"><label for="plan-picker">Selecione o plano:</label><select id="plan-picker" class="plan-picker"><option value="" selected disabled>Selecione o plano</option><option value="standard">STANDARD</option><option value="pro">PRO</option><option value="premium">PREMIUM</option></select></div><div class="plans-wrap"><div class="plan-card plan-standard">
+</div><div class="page"><div class="inner"><div class="inner-diagonal"></div><div class="inner-diagonal-2"></div><div class="inner-content"><h2 class="sect">NOSSOS PRODUTOS</h2><h3 class="sub">Gerenciamento de Risco</h3><p class="body-text">Nosso produto de referência que tem como objetivo reduzir os altos índices de roubos, resultando em uma minimização de perdas financeiras para o setor de transportes. Toda Gestão de Riscos é desenvolvida através de medidas preventivas, com suporte de recursos tecnológicos de ponta e equipe especializada atendendo 24/7.</p><h3 class="sub">Software Logístico</h3><p class="body-text">O New Connect é nosso Software Logístico com um conjunto de soluções capaz de gerenciar todos os procedimentos de viagem através de alertas e eventos programados. Através do Atlas Analytics (B.I), você terá relatórios completos, proporcionando a otimização de recursos e redução de custos da sua operação.</p><p class="body-text">Com o Gestão à Vista trazemos indicadores de visualização da frota em Real Time, acompanhamento de viagens, controle de velocidade, mapa de viagem, indicador de tempo em pátio, progresso de viagem e controle de tempo de coletas e entregas.</p><h3 class="sub">Perfil Securitário</h3><p class="body-text">Nosso serviço de Cadastro e Consulta é um sistema 100% digital, responsável por toda análise de perfil de profissionais. Com atendimento 24 horas, garantimos agilidade e segurança máxima para otimizar a sua operação de contratação e verificação de antecedentes.</p><p class="body-text">Contamos com nossa Inteligência Artificial (IA), que realiza varreduras em bancos de dados oficiais, analisando todos os dados do consultado, como dados de pessoa física, processos trabalhistas, criminais ou penais e dados do veículo.</p></div></div></div><div class="page"><div class="inner"><div class="inner-diagonal"></div><div class="inner-diagonal-2"></div><div class="inner-content"><div class="plans-title">PLANO ESCOLHIDO</div><div class="plan-select-row"><label for="plan-picker">Selecione o plano:</label><select id="plan-picker" class="plan-picker pw-locked"><option value="" disabled="">Selecione o plano</option><option value="standard" selected="">STANDARD</option><option value="pro">PRO</option><option value="premium">PREMIUM</option></select></div><div class="plans-wrap"><div class="plan-card plan-standard" style="display: none;">
   <div class="plan-head"><div class="pname">STANDARD</div><div class="psub">Detalhamento do plano</div></div>
   <div class="plan-body"><ul><li>Personalização de até 2 operações;</li><li>Acesso até 20 usuários;</li><li>Acesso a telas Panorâmica e Mapa Gerencial;</li><li>Macros Padrão Atlas;</li><li>Notificação de alertas via WhatsApp;</li><li>Treinamento online (1 por ano);</li><li>P.P.A (Procedimento Padrão Atlas);</li><li>Monitoramento com SM;</li><li>Relatórios completos;</li><li>Integração de SM;</li></ul><div class="plan-add"><b>Adicional:</b> Regras de acordo com apólice.</div></div>
-</div><div class="plan-card plan-pro">
+</div><div class="plan-card plan-pro" style="display: flex;">
   <div class="plan-head"><div class="pname">PRO</div><div class="psub">Detalhamento do plano</div></div>
   <div class="plan-body"><ul><li>Personalização de até 5 operações;</li><li>Acesso a telas Panorâmica e Mapa Gerencial;</li><li>Acesso ilimitado de usuários;</li><li>Macros personalizadas;</li><li>Notificações de alerta via WhatsApp;</li><li>Notificações personalizadas por e-mail;</li><li>Treinamento online (3 por ano);</li><li>Atendimento de pós-venda;</li><li>Atlas Analytics Padrão;</li><li>Relatórios completos;</li><li>Integração de SM;</li></ul><div class="plan-add"><b>Adicional:</b> Regras de acordo com apólice.</div></div>
-</div><div class="plan-card plan-premium">
+</div><div class="plan-card plan-premium" style="display: none;">
   <div class="plan-head"><div class="pname">PREMIUM</div><div class="psub">Detalhamento do plano</div></div>
   <div class="plan-body"><ul><li>Personalização de até 5 operações;</li><li>Acesso a telas Panorâmica e Mapa Gerencial;</li><li>Acesso ilimitado de usuários;</li><li>Macros personalizadas;</li><li>Notificações de alerta via WhatsApp;</li><li>Notificações personalizadas por e-mail;</li><li>Treinamento online (3 por ano);</li><li>Treinamento de motoristas e ECVC;</li><li>Monitoramento sem SM;</li><li>Integração de SM;</li><li>Rastreamento de veículos sem SM (desengate e Jammer);</li><li>Visita de Pós-Venda;</li><li>Atlas Analytics Personalizado;</li><li>Relatórios completos;</li><li>Plano de viagem para motoristas;</li></ul><div class="plan-add"><b>Adicional:</b> Regras de acordo com apólice.</div></div>
-</div></div><div class="plans-title" style="margin-top:6px;">VALORES E CONDIÇÕES</div><div class="item-picker"><div class="item-picker-title">O que esta proposta vai incluir? Selecione os itens:</div><label class="item-picker-opt"><input type="checkbox" class="row-toggle" data-row="pricing-torre-r0"> Torre de Controle Logística — mensalidade por veículo</label><label class="item-picker-opt"><input type="checkbox" class="row-toggle" data-row="pricing-torre-r1"> Torre de Controle Logística — por viagem (terceiros)</label><label class="item-picker-opt"><input type="checkbox" class="row-toggle" data-row="pricing-torre-r2"> Atlas Analytics (BI) — mensalidade por veículo</label><label class="item-picker-opt"><input type="checkbox" class="row-toggle" data-row="pricing-torre-r3"> Atlas Analytics (BI) — por viagem/terceiro</label><label class="item-picker-opt"><input type="checkbox" class="row-toggle" data-row="pricing-torre-r4"> Acesso de Login Individual — por usuário/mês</label></div><table class="pricing" id="pricing-torre"><thead><tr><th style="width:14%;">SERVIÇO</th><th style="width:11%;">VALOR</th><th style="width:7%;">QTDE</th><th style="width:12%;">VALOR TOTAL</th><th style="width:21%;">PLANO</th><th>DETALHAMENTO</th></tr></thead><tbody><tr class="pricing-row" data-row="pricing-torre-r0" style="display:none;"><td class="svc editable-cell" contenteditable="true" spellcheck="false">Torre de Controle Logística</td><td class="center"><span class="currency-prefix">R$</span><input type="text" class="valor-input" data-table="pricing-torre" data-row="pricing-torre-r0" inputmode="decimal" value="34,90" size="6"></td><td class="center"><input type="text" class="qtde-input" data-table="pricing-torre" data-row="pricing-torre-r0" inputmode="numeric" value="01" size="2"></td><td class="center line-total-cell"><span class="currency-prefix">R$</span><span class="line-total" data-table="pricing-torre" data-row="pricing-torre-r0">0,00</span></td><td class="editable-field" contenteditable="true" spellcheck="false">Por veículo/mês Minimo de XX Veículos</td><td class="detail editable-cell" contenteditable="true" spellcheck="false">Software Completo com módulos de Gestão à Vista, Gestão de Alvos, Transit Time, ETA.</td></tr><tr class="pricing-row" data-row="pricing-torre-r1" style="display:none;"><td class="svc editable-cell" contenteditable="true" spellcheck="false">Torre de Controle Logística</td><td class="center"><span class="currency-prefix">R$</span><input type="text" class="valor-input" data-table="pricing-torre" data-row="pricing-torre-r1" inputmode="decimal" value="8,90" size="6"></td><td class="center"><input type="text" class="qtde-input" data-table="pricing-torre" data-row="pricing-torre-r1" inputmode="numeric" value="01" size="2"></td><td class="center line-total-cell"><span class="currency-prefix">R$</span><span class="line-total" data-table="pricing-torre" data-row="pricing-torre-r1">0,00</span></td><td class="editable-field" contenteditable="true" spellcheck="false">Por viagem/terceiros Minimo de XX Veículos</td><td class="detail editable-cell" contenteditable="true" spellcheck="false">Software Completo com módulos de Gestão à Vista, Gestão de Alvos, Transit Time, ETA.</td></tr><tr class="pricing-row" data-row="pricing-torre-r2" style="display:none;"><td class="svc editable-cell" contenteditable="true" spellcheck="false">Atlas Analytics (BI)</td><td class="center"><span class="currency-prefix">R$</span><input type="text" class="valor-input" data-table="pricing-torre" data-row="pricing-torre-r2" inputmode="decimal" value="4,90" size="6"></td><td class="center"><input type="text" class="qtde-input" data-table="pricing-torre" data-row="pricing-torre-r2" inputmode="numeric" value="01" size="2"></td><td class="center line-total-cell"><span class="currency-prefix">R$</span><span class="line-total" data-table="pricing-torre" data-row="pricing-torre-r2">0,00</span></td><td class="editable-cell" contenteditable="true" spellcheck="false">Por veículo/mês</td><td class="detail editable-cell" contenteditable="true" spellcheck="false">BI's e Indicadores de Gestão de Performance Padrão Atlas. (Transit Time, Alertas, Gestão de Alvos)</td></tr><tr class="pricing-row" data-row="pricing-torre-r3" style="display:none;"><td class="svc editable-cell" contenteditable="true" spellcheck="false">Atlas Analytics (BI)</td><td class="center"><span class="currency-prefix">R$</span><input type="text" class="valor-input" data-table="pricing-torre" data-row="pricing-torre-r3" inputmode="decimal" value="0,90" size="6"></td><td class="center"><input type="text" class="qtde-input" data-table="pricing-torre" data-row="pricing-torre-r3" inputmode="numeric" value="01" size="2"></td><td class="center line-total-cell"><span class="currency-prefix">R$</span><span class="line-total" data-table="pricing-torre" data-row="pricing-torre-r3">0,00</span></td><td class="editable-cell" contenteditable="true" spellcheck="false">Por viagem/terceiro</td><td class="detail editable-cell" contenteditable="true" spellcheck="false">BI's e Indicadores de Gestão de Performance Padrão Atlas. (Transit Time, Alertas, Gestão de Alvos)</td></tr><tr class="pricing-row" data-row="pricing-torre-r4" style="display:none;"><td class="svc editable-cell" contenteditable="true" spellcheck="false">Atlas Analytics (BI)</td><td class="center"><span class="currency-prefix">R$</span><input type="text" class="valor-input" data-table="pricing-torre" data-row="pricing-torre-r4" inputmode="decimal" value="14,90" size="6"></td><td class="center"><input type="text" class="qtde-input" data-table="pricing-torre" data-row="pricing-torre-r4" inputmode="numeric" value="01" size="2"></td><td class="center line-total-cell"><span class="currency-prefix">R$</span><span class="line-total" data-table="pricing-torre" data-row="pricing-torre-r4">0,00</span></td><td class="editable-cell" contenteditable="true" spellcheck="false">Por usuário/mês</td><td class="detail editable-cell" contenteditable="true" spellcheck="false">Acesso de Login Individual</td></tr></tbody></table><div class="obs-row"><span>OBS: Faturamento Mínimo Mensal</span><span class="val"><span class="currency-prefix">R$</span> <span class="editable-field" contenteditable="true" spellcheck="false">XX,XX</span></span></div></div></div></div><div class="page"><div class="inner"><div class="inner-diagonal"></div><div class="inner-diagonal-2"></div><div class="inner-content"><h3 class="sub">REQUISITOS TÉCNICOS</h3><ul class="check-list"><li>Sistema operacional: Windows 10 ou superior</li><li>Memória RAM: 4 GB ou superior</li><li>Conexão com a internet obrigatória para funcionamento do software</li><li>Navegador Recomendado: Chrome, Edge ou Opera.</li></ul><h3 class="sub">PREMISSAS</h3><ul class="check-list"><li>Treinamentos e capacitações serão organizados pela Atlas, podendo ser realizados online ou presencialmente.</li><li>O suporte técnico estará disponível para sanar dúvidas após a implantação do software.</li><li>O atendimento da equipe de pós-vendas será oferecido para suporte adicional e melhorias</li></ul><h2 class="sect">ESPECIFICAÇÃO TÉCNICA</h2><p class="label-line">Integrações</p><ul class="check-list"><li>Realizadas via API, utilizando padrões SOAP e JSON.</li></ul><p class="label-line">Infraestrutura Aplicada:</p><ul class="check-list"><li>O sistema é instalado no colocation da Atlas hospedado em uma empresa especializada em datacenter e segurança de dados.</li></ul><p class="label-line">Armazenamento de Dados:</p><ul class="check-list"><li>Dados armazenados no colocation, com redundância aplicada na plataforma Azure para maior segurança.</li></ul><h2 class="sect">DOCUMENTAÇÃO TÉCNICA</h2><ul class="check-list"><li>A documentação técnica das integrações está disponível sob demanda, mediante solicitação à equipe de suporte Atlas.</li></ul></div></div></div><div class="page"><div class="inner"><div class="inner-diagonal"></div><div class="inner-diagonal-2"></div><div class="inner-content"><h2 class="sect">RISCOS TÉCNICOS</h2><p class="label-line">Principais Riscos:</p><ul class="check-list"><li>Falta de conectividade em uma ou ambas as partes envolvidas.</li><li>Falhas em integrações de cadastros (veículo, motorista, alvo, viagem) devido à inconsistência de dados.</li><li>Erro no espelhamento e falhas nas integrações com tecnologias de rastreamento (como Sascar) e mitigação de riscos.</li><li>Ferramentas de monitoramento em tempo real para identificação e resolução de problemas.</li></ul><h2 class="sect">FUNCIONALIDADES</h2><ul class="check-list"><li>Gestão de Tempo em Trânsito: Acompanhamento em tempo real de tempos de carga, descarga e deslocamento.</li><li>Gestão de Viagens e Escalas: Permite o gerenciamento eficiente de viagens e escalas, garantindo maior organização e produtividade.</li><li>Gestão de Não Conformidades: Controle de desvios de rota, atrasos no ETA, excessos de tempo e outros eventos.</li><li>Medição de Performance: Avaliação de desempenho de motoristas, veículos e centros de transferência de carga (CTC).</li><li>Regras de GR: Aplicação de regras de gestão de risco durante a criação das viagens, aumentando a assertividade das informações.</li></ul><h2 class="sect">SEGURANÇA E PRIVACIDADE</h2><ul class="dot-list"><li>Proteção de Dados: Dados de usuários, motoristas e veículos são protegidos por criptografia e políticas de acesso restrito por usuário.</li><li>Backup: Backups automáticos diários, com redundância em nuvem, para garantir a continuidade das operações.</li><li>Prevenção de Violações: Medidas avançadas de segurança em datacenters especializados e monitoramento constante garantem a integridade dos dados.</li></ul></div></div></div><div class="page"><div class="inner"><div class="inner-diagonal"></div><div class="inner-diagonal-2"></div><div class="inner-content"><h2 class="sect">CONFIDENCIALIDADE</h2><p class="body-text">As informações contidas neste documento, sobre produtos e serviços são de propriedade da ATLAS, sendo sua duplicação permitida apenas para uso interno do cliente, essas informações não poderão ser utilizadas como fonte de informações a terceiros. Todas as informações fornecidas sobre a ATLAS não deverão ser divulgadas, salvo em caso de autorização por escrito de ambas as partes.</p><h2 class="sect">CONSIDERAÇÕES GERAIS</h2><ul class="dot-list"><li>Os valores acima não contemplam as despesas de comunicação dos equipamentos de rastreamento e outras taxas que, porventura, as empresas fornecedoras destes equipamentos venham a cobrar;</li><li>O contrato está sob reajuste contratual seguindo a variação dos últimos 12 meses do dissídio salarial da categoria, tendo como base o sindicato de Ribeirão Preto, SP;</li><li>Custos de Implantação e treinamentos solicitados serão cobrados à parte. Para distâncias superiores a 500 km, a deslocação poderá ser por via aérea;</li><li>Veículos com tecnologia AUTOTRAC possuem um custo adicional de R$14,45 mensais por veículo. Esse valor é devido à integração e é necessário que o cliente ofereça uma subconta de acesso para a equipe Atlas;</li><li>Custos de desenvolvimentos adicionais terão o valor de R$250,00 (Duzentos e Cinquenta Reais) por hora trabalhada;</li><li>Os dados e informações relativos à localização dos veículos cadastrados são transmitidos através de sistemas de rastreadores terceiros, onde tais tecnologias e transmissões estão sujeitas a interrupções, interferências eletromagnéticas e físicas, capazes de afetar o desenvolvimento da prestação dos serviços proposta;</li><li>Considerar a existência de “zonas de sombra”, nas quais fica prejudicada a transmissão e a recepção de sinais dos aparelhos instalados nos veículos. Há interferência significativa na eficácia dos comandos enviados e recebidos pelos aparelhos de análise, podendo nessas situações, haver falhas na prestação dos serviços não decorrentes de ação da proponente;</li></ul></div></div></div><div class="page"><div class="inner"><div class="inner-diagonal"></div><div class="inner-diagonal-2"></div><div class="inner-content">
+</div></div><div class="plans-title" style="margin-top:6px;">VALORES E CONDIÇÕES</div><table class="pricing" id="pricing-completa"><thead><tr><th style="width:14%;">SERVIÇO</th><th style="width:11%;">VALOR</th><th style="width:7%;">QTDE</th><th style="width:12%;">VALOR TOTAL</th><th style="width:21%;">PLANO</th><th>DETALHAMENTO</th></tr></thead><tbody></tbody></table><div class="obs-row"><span>OBS: Faturamento Mínimo Mensal</span><span class="val"><span class="currency-prefix">R$</span> <span class="editable-field pw-locked" contenteditable="false" spellcheck="false">1000,00</span></span></div></div></div></div><div class="page"><div class="inner"><div class="inner-diagonal"></div><div class="inner-diagonal-2"></div><div class="inner-content"><h3 class="sub">REQUISITOS TÉCNICOS</h3><ul class="check-list"><li>Sistema operacional: Windows 10 ou superior</li><li>Memória RAM: 4 GB ou superior</li><li>Conexão com a internet obrigatória para funcionamento do software</li><li>Navegador Recomendado: Chrome, Edge ou Opera.</li></ul><h3 class="sub">PREMISSAS</h3><ul class="check-list"><li>Treinamentos e capacitações serão organizados pela Atlas, podendo ser realizados online ou presencialmente.</li><li>O suporte técnico estará disponível para sanar dúvidas após a implantação do software.</li><li>O atendimento da equipe de pós-vendas será oferecido para suporte adicional e melhorias</li></ul><h2 class="sect">ESPECIFICAÇÃO TÉCNICA</h2><p class="label-line">Integrações</p><ul class="check-list"><li>Realizadas via API, utilizando padrões SOAP e JSON.</li></ul><p class="label-line">Infraestrutura Aplicada:</p><ul class="check-list"><li>O sistema é instalado no colocation da Atlas hospedado em uma empresa especializada em datacenter e segurança de dados.</li></ul><p class="label-line">Armazenamento de Dados:</p><ul class="check-list"><li>Dados armazenados no colocation, com redundância aplicada na plataforma Azure para maior segurança.</li></ul><h2 class="sect">DOCUMENTAÇÃO TÉCNICA</h2><ul class="check-list"><li>A documentação técnica das integrações está disponível sob demanda, mediante solicitação à equipe de suporte Atlas.</li></ul></div></div></div><div class="page"><div class="inner"><div class="inner-diagonal"></div><div class="inner-diagonal-2"></div><div class="inner-content"><h2 class="sect">RISCOS TÉCNICOS</h2><p class="label-line">Principais Riscos:</p><ul class="check-list"><li>Falta de conectividade em uma ou ambas as partes envolvidas.</li><li>Falhas em integrações de cadastros (veículo, motorista, alvo, viagem) devido à inconsistência de dados.</li><li>Erro no espelhamento e falhas nas integrações com tecnologias de rastreamento (como Sascar) e mitigação de riscos.</li><li>Ferramentas de monitoramento em tempo real para identificação e resolução de problemas.</li></ul><h2 class="sect">FUNCIONALIDADES</h2><ul class="check-list"><li>Gestão de Tempo em Trânsito: Acompanhamento em tempo real de tempos de carga, descarga e deslocamento.</li><li>Gestão de Viagens e Escalas: Permite o gerenciamento eficiente de viagens e escalas, garantindo maior organização e produtividade.</li><li>Gestão de Não Conformidades: Controle de desvios de rota, atrasos no ETA, excessos de tempo e outros eventos.</li><li>Medição de Performance: Avaliação de desempenho de motoristas, veículos e centros de transferência de carga (CTC).</li><li>Regras de GR: Aplicação de regras de gestão de risco durante a criação das viagens, aumentando a assertividade das informações.</li></ul><h2 class="sect">SEGURANÇA E PRIVACIDADE</h2><ul class="dot-list"><li>Proteção de Dados: Dados de usuários, motoristas e veículos são protegidos por criptografia e políticas de acesso restrito por usuário.</li><li>Backup: Backups automáticos diários, com redundância em nuvem, para garantir a continuidade das operações.</li><li>Prevenção de Violações: Medidas avançadas de segurança em datacenters especializados e monitoramento constante garantem a integridade dos dados.</li></ul></div></div></div><div class="page"><div class="inner"><div class="inner-diagonal"></div><div class="inner-diagonal-2"></div><div class="inner-content"><h2 class="sect">CONFIDENCIALIDADE</h2><p class="body-text">As informações contidas neste documento, sobre produtos e serviços são de propriedade da ATLAS, sendo sua duplicação permitida apenas para uso interno do cliente, essas informações não poderão ser utilizadas como fonte de informações a terceiros. Todas as informações fornecidas sobre a ATLAS não deverão ser divulgadas, salvo em caso de autorização por escrito de ambas as partes.</p><h2 class="sect">CONSIDERAÇÕES GERAIS</h2><ul class="dot-list"><li>Os valores acima não contemplam as despesas de comunicação dos equipamentos de rastreamento e outras taxas que, porventura, as empresas fornecedoras destes equipamentos venham a cobrar;</li><li>O contrato está sob reajuste contratual seguindo a variação dos últimos 12 meses do dissídio salarial da categoria, tendo como base o sindicato de Ribeirão Preto, SP;</li><li>Custos de Implantação e treinamentos solicitados serão cobrados à parte. Para distâncias superiores a 500 km, a deslocação poderá ser por via aérea;</li><li>Veículos com tecnologia AUTOTRAC possuem um custo adicional de R$14,45 mensais por veículo. Esse valor é devido à integração e é necessário que o cliente ofereça uma subconta de acesso para a equipe Atlas;</li><li>O serviço de acionamento de Pronta-Resposta tem o valor unitário fixado em R$1.300,00 (um mil e trezentos reais) para o período máximo de 3 horas. O período que excedente será cobrado em R$180,00 (cento e oitenta reais) por hora;</li><li>O serviço de Escolta tem o valor variável, de acordo com km rodado;</li><li>Custos de desenvolvimentos adicionais terão o valor de R$250,00 (Duzentos e Cinquenta Reais) por hora trabalhada;</li><li>A prestação dos serviços é meramente supletiva e complementar, não consistindo em obrigação de guarda de veículos, nem dispensando ou eximindo qualquer adoção de outras medidas de segurança;</li><li>Os serviços não impedem a ocorrência de sinistros ou danos, nem furtos ou roubos dos veículos cadastrados e analisados;</li><li>Os dados e informações relativos à localização dos veículos cadastrados são transmitidos através de sistemas de rastreadores terceiros, onde tais tecnologias e transmissões estão sujeitas a interrupções, interferências eletromagnéticas e físicas, capazes de afetar o desenvolvimento da prestação dos serviços proposta;</li><li>Considerar a existência de “zonas de sombra”, nas quais fica prejudicada a transmissão e a recepção de sinais dos aparelhos instalados nos veículos. Há interferência significativa na eficácia dos comandos enviados e recebidos pelos aparelhos de análise, podendo nessas situações, haver falhas na prestação dos serviços não decorrentes de ação da proponente;</li><li>Há obrigação de seguir o PGR.</li><li>Os valores acima podem variar de acordo com a quantidade de perfis cadastrados e consultados, assim como personalizações e integrações solicitadas.</li><li>O contrato possui um faturamento mínimo de R$<span class="editable-field pw-locked" contenteditable="false" spellcheck="false">XX,XX</span></li></ul></div></div></div><div class="page"><div class="inner"><div class="inner-diagonal"></div><div class="inner-diagonal-2"></div><div class="inner-content">
 <h2 class="sect">ASSINATURA</h2>
 <p class="body-text">Declaro que li e concordo plenamente com a cobrança da ATLAS contra a minha empresa, referente ao conteúdo desta proposta.</p>
 <p class="body-text">Esta proposta estará vinculada ao contrato de prestação de serviços a ser firmado entre as partes, bem como aos demais termos de condições específicas de serviço, conforme contratação, além do termo de licença de uso de software.</p>
 <p class="body-text"><i>*Proposta com validade de 30 dias.</i></p>
-<div class="sig-field">Identificação: <span class="rule" contenteditable="true" spellcheck="false">&nbsp;</span></div>
-<div class="sig-field">Nome: <span class="rule" contenteditable="true" spellcheck="false">&nbsp;</span></div>
-<div class="sig-field">Cargo: <span class="rule" contenteditable="true" spellcheck="false">&nbsp;</span></div>
-<div class="sig-field">CNPJ: <span class="rule" contenteditable="true" spellcheck="false">&nbsp;</span></div>
-<div class="sig-field">Cidade: UF: <span class="rule" contenteditable="true" spellcheck="false">&nbsp;</span></div>
-<div class="sig-field">E-mail: <span class="rule" contenteditable="true" spellcheck="false">&nbsp;</span></div>
-<div class="fone-line">Fone: ( <span class="fone-seg fone-ddd" contenteditable="true" spellcheck="false">&nbsp;</span> ) <span class="fone-seg" contenteditable="true" spellcheck="false">&nbsp;</span> - <span class="fone-seg" contenteditable="true" spellcheck="false">&nbsp;</span></div>
-<div class="sig-date"><span class="u" contenteditable="true" spellcheck="false">&nbsp;</span> de <span class="u month" contenteditable="true" spellcheck="false">&nbsp;</span> de <span class="u" contenteditable="true" spellcheck="false">2026</span>.</div>
-<div class="sig-pad-label">Assinatura do cliente</div><div class="sig-pad-wrap"><canvas id="sigPad" class="sig-pad" width="420" height="120"></canvas><img id="sigPadPrintImg" class="sig-pad-print-img" alt=""></div><div class="sig-line"></div><button type="button" class="sig-clear-btn" id="sigClearBtn">Limpar assinatura</button>
-<div class="sig-name editable-field-dark" id="sig-name-field" contenteditable="true" spellcheck="false">[NOME DO CLIENTE]</div>
-<div class="sig-cnpj editable-field-dark" id="sig-cnpj-field" contenteditable="true" spellcheck="false">XX.XXX.XXX/XXXX-XX</div>
+<div class="sig-field">Identificação: <span class="rule pw-locked" contenteditable="false" spellcheck="false">&nbsp;</span></div>
+<div class="sig-field">Nome: <span class="rule pw-locked" contenteditable="false" spellcheck="false">&nbsp;</span></div>
+<div class="sig-field">Cargo: <span class="rule pw-locked" contenteditable="false" spellcheck="false">&nbsp;</span></div>
+<div class="sig-field">CNPJ: <span class="rule pw-locked" contenteditable="false" spellcheck="false">&nbsp;</span></div>
+<div class="sig-field">Cidade: UF: <span class="rule pw-locked" contenteditable="false" spellcheck="false">&nbsp;</span></div>
+<div class="sig-field">E-mail: <span class="rule pw-locked" contenteditable="false" spellcheck="false">&nbsp;</span></div>
+<div class="fone-line">Fone: ( <span class="fone-seg fone-ddd pw-locked" contenteditable="false" spellcheck="false">&nbsp;</span> ) <span class="fone-seg pw-locked" contenteditable="false" spellcheck="false">&nbsp;</span> - <span class="fone-seg pw-locked" contenteditable="false" spellcheck="false">&nbsp;</span></div>
+<div class="sig-date"><span class="u pw-locked" contenteditable="false" spellcheck="false">&nbsp;</span> de <span class="u month pw-locked" contenteditable="false" spellcheck="false">&nbsp;</span> de <span class="u pw-locked" contenteditable="false" spellcheck="false">2026</span>.</div>
+<div class="sig-pad-label">Assinatura do cliente</div><div class="sig-pad-wrap"><canvas id="sigPad" class="sig-pad" width="420" height="120" style="display: none;"></canvas><img id="sigPadPrintImg" class="sig-pad-print-img" alt="" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAaQAAAB4CAYAAAC9x4bVAAAFu0lEQVR4AezVi0rsMBQF0MH//2gZBV8wrW3TJGdnXfCidpqcs7aw3x7+ESBAgACBCQQU0gQhGIEAAQIEHg+F5K8gV8BmBAiUElBIpeIyLAECBHIFFFJutjYjQCBXIHIzhRQZq6UIECBQT0Ah1cvMxAQIEIgUUEiRsR5fyhsECBAYLaCQRifgfgIECBD4EFBIHwz+I0AgV8BmVQQUUpWkzEmAAIFwAYUUHrD1CBAgUEVAIR1PyhsECBAgcIOAQroB1ZEECBAgcFxAIR038waBXAGbERgooJAG4ruaAAECBL4FFNK3he8IECBAYKDAzYU0cDNXEyBAgEApAYVUKi7DEiBAIFdAIeVma7ObBRxPgEBbAYXU1tNpBAgQIHBSQCGdhPMaAQIEcgXGbKaQxri7lQABAgT+CCikPyB+JECAAIExAgppjPtqt9qXAAECuwIKaZfIBwgQIECgh4BC6qHsDgIEcgVs1kxAITWjdBABAgQIXBFQSFf0vEuAAAECzQQUUjPKVgc5hwABAmsKKKQ1c7c1AQIEphNQSNNFYiACuQI2I7AloJC2dDwjQIAAgW4CCqkbtYsIECBAYEugdiFtbeYZAQIECJQSUEil4jIsAQIEcgUUUm62NqstYHoCywkopOUitzABAgTmFFBIc+ZiKgIECOQKvNhMIb2A8WsCBAgQ6CugkPp6u40AAQIEXggopBcwfl1JwKwECCQIKKSEFO1AgACBAAGFFBCiFQgQyBVYaTOFtFLadiVAgMDEAgpp4nCMRoAAgZUEFNJKaT939UWAAIFJBRTSpMEYiwABAqsJKKTVErcvgVwBmxUXUEjFAzQ+AQIEUgQUUkqS9iBAgEBxAYW0EaBHBAgQINBPQCH1s3YTAQIECGwIKKQNHI8I5ArYjMB8AgppvkxMRIAAgSUFFNKSsVuaAAEC8wm0KqT5NjMRAQIECJQSUEil4jIsAQIEcgUUUm62Nmsl4BwCBLoIKKQuzC4hQIAAgT0BhbQn5DkBAgRyBabaTCFNFYdhCBAgsK6AQlo3e5sTIEBgKgGFNFUc9YexAQECBM4KKKSzct4jQIAAgaYCCqkpp8MIEMgVsNndAgrpbmHnEyBAgMC/BBTSv5h8iAABAgTuFlBIdwu/Pt8TAgQIEPghoJB+YPiWAAECBMYJKKRx9m4mkCtgMwInBBTSCTSvECBAgEB7AYXU3tSJBAgQIHBCoEghndjMKwQIECBQSkAhlYrLsAQIEMgVUEi52dqsiIAxCRD4FFBInw7+J0CAAIHBAgppcACuJ0CAQK7Asc0U0jEvnyZAgACBmwQU0k2wjiVAgACBYwIK6ZiXT48VcDsBAsECCik4XKsRIECgkoBCqpSWWQkQyBWw2UMh+SMgQIAAgSkEFNIUMRiCAAECBBRS7N+AxQgQIFBLQCHVysu0BAgQiBVQSLHRWoxAroDNMgUUUmautiJAgEA5AYVULjIDEyBAIFNAIT1z9UWAAAECwwUU0vAIDECAAAECTwGF9FTwRSBXwGYEyggopDJRGZQAAQLZAgopO1/bESBAoIzA4UIqs5lBCRAgQKCUgEIqFZdhCRAgkCugkHKztdlhAS8QIDBSQCGN1Hc3AQIECHwJKKQvCt8QIEAgV6DCZgqpQkpmJECAwAICCmmBkK1IgACBCgIKqUJKM85oJgIECDQWUEiNQR1HgAABAucEFNI5N28RIJArYLNBAgppELxrCRAgQOC3gEL67eEnAgQIEBgkoJA6wLuCAAECBPYFFNK+kU8QIECAQAcBhdQB2RUEcgVsRqCdgEJqZ+kkAgQIELggoJAu4HmVAAECBNoJzFZI7TZzEgECBAiUElBIpeIyLAECBHIFFFJutjabTcA8BAhsCiikTR4PCRAgQKCXgELqJe0eAgQI5Ao02UwhNWF0CAECBAhcFVBIVwW9T4AAAQJNBBRSE0aHtBZwHgEC6wm8AwAA//922Ls1AAAABklEQVQDAJopAPGZudVLAAAAAElFTkSuQmCC" style="display: block;"></div><div class="sig-line"></div><button type="button" class="sig-clear-btn" id="sigClearBtn">Limpar assinatura</button>
+<div class="sig-name editable-field-dark pw-locked" id="sig-name-field" contenteditable="false" spellcheck="false">Transpacheco&nbsp;</div>
+<div class="sig-cnpj editable-field-dark pw-locked" id="sig-cnpj-field" contenteditable="false" spellcheck="false"></div>
 </div></div></div>
 </div>
 
@@ -842,6 +816,125 @@ document.addEventListener('DOMContentLoaded', function(){
     });
   }
 })();
+</script>
+<script>
+var ATLAS_PROFILE_RANGE_TABLE = {
+  "100":  {objeto:"23,50", integrada:"34,50", consulta:"6,50",  cnh:"9,90", rh:"23,50", faceObjeto:"30,50", faceIntegrada:"41,50", financeira:"9,20", vitimologia:"69,90"},
+  "250":  {objeto:"21,39", integrada:"31,40", consulta:"5,92",  cnh:"9,26", rh:"21,39", faceObjeto:"28,40", faceIntegrada:"38,80", financeira:"8,60", vitimologia:"63,90"},
+  "400":  {objeto:"19,46", integrada:"28,57", consulta:"5,38",  cnh:"8,65", rh:"19,46", faceObjeto:"26,44", faceIntegrada:"36,28", financeira:"8,04", vitimologia:"60,90"},
+  "500":  {objeto:"15,90", integrada:"28,00", consulta:"4,41",  cnh:"8,09", rh:"15,90", faceObjeto:"24,61", faceIntegrada:"33,92", financeira:"7,52", vitimologia:"57,90"},
+  "1000": {objeto:"14,87", integrada:"27,50", consulta:"4,02",  cnh:"7,57", rh:"14,87", faceObjeto:"22,91", faceIntegrada:"32,57", financeira:"7,03", vitimologia:"54,90"},
+  "1500": {objeto:"13,90", integrada:"27,20", consulta:"3,66",  cnh:"7,07", rh:"13,90", faceObjeto:"21,33", faceIntegrada:"31,99", financeira:"6,57", vitimologia:"51,90"},
+  "2000": {objeto:"13,00", integrada:"27,00", consulta:"3,33",  cnh:"6,61", rh:"13,00", faceObjeto:"19,86", faceIntegrada:"31,10", financeira:"6,15", vitimologia:"49,90"}
+};
+var ATLAS_PROFILE_RANGE_BOUNDS = {
+  "100":  {min:1,    max:100},
+  "250":  {min:101,  max:250},
+  "400":  {min:251,  max:400},
+  "500":  {min:401,  max:500},
+  "1000": {min:501,  max:1000},
+  "1500": {min:1001, max:1500},
+  "2000": {min:2001, max:999999}
+};
+function wireRangeSelect(sel){
+  sel.addEventListener('change', function(){
+    var row = sel.dataset.row;
+    var input = document.querySelector('.valor-input[data-row="'+row+'"]');
+    var qtyInput = document.querySelector('.qtde-input[data-row="'+row+'"]');
+    var rangeData = ATLAS_PROFILE_RANGE_TABLE[sel.value];
+    if(input && rangeData){
+      var col = input.dataset.rangeCol;
+      if(rangeData[col]){
+        input.value = rangeData[col];
+        input.dispatchEvent(new Event('input', {bubbles:true}));
+      }
+    }
+    var bounds = ATLAS_PROFILE_RANGE_BOUNDS[sel.value];
+    if(qtyInput && bounds){
+      qtyInput.min = bounds.min;
+      qtyInput.max = bounds.max;
+      qtyInput.dataset.rangeMin = bounds.min;
+      qtyInput.dataset.rangeMax = bounds.max;
+      qtyInput.value = String(bounds.max);
+      qtyInput.dispatchEvent(new Event('input', {bubbles:true}));
+    }
+  });
+}
+function wireQtyClamp(q){
+  q.addEventListener('change', function(){
+    var min = q.dataset.rangeMin, max = q.dataset.rangeMax;
+    if(min === undefined || max === undefined) return;
+    var v = parseInt((q.value||'').replace(/[^0-9]/g,''), 10);
+    if(isNaN(v)) return;
+    if(v < parseInt(min, 10)) v = parseInt(min, 10);
+    if(v > parseInt(max, 10)) v = parseInt(max, 10);
+    q.value = String(v);
+    q.dispatchEvent(new Event('input', {bubbles:true}));
+  });
+}
+function wireRecalcInput(el){
+  el.addEventListener('input', function(){ recalcTable(el.dataset.table); });
+}
+document.querySelectorAll('.row-range-select').forEach(wireRangeSelect);
+document.querySelectorAll('.qtde-input').forEach(wireQtyClamp);
+
+var addRangeCounter = 0;
+function wireAddRangeBtn(btn){
+  btn.addEventListener('click', function(){
+    var row = btn.dataset.row;
+    var priceInput = document.querySelector('.valor-input[data-row="'+row+'"]');
+    if(!priceInput) return;
+    var table = priceInput.dataset.table;
+    var col = priceInput.dataset.rangeCol;
+    var tr = priceInput.closest('tr');
+    var currentValue = priceInput.value;
+
+    var svcText = '';
+    var walk = tr;
+    while(walk){
+      var svcCell = walk.querySelector('td.svc');
+      if(svcCell){ svcText = svcCell.textContent.trim(); break; }
+      walk = walk.previousElementSibling;
+    }
+    var planoCell = tr.children[tr.children.length - 2];
+    var planoText = planoCell ? planoCell.textContent.trim() : '';
+
+    var templateSelect = document.querySelector('.row-range-select');
+    var optionsHtml = templateSelect ? templateSelect.innerHTML : '';
+
+    addRangeCounter++;
+    var newId = table + '-extra' + addRangeCounter;
+
+    var newTr = document.createElement('tr');
+    newTr.className = 'added-range-row';
+    newTr.innerHTML =
+      '<td class="svc-repeat">' + svcText + '</td>' +
+      '<td class="center"><select class="row-range-select" data-row="' + newId + '">' + optionsHtml + '</select>' +
+      '<span class="currency-prefix">R$</span>' +
+      '<input type="text" class="valor-input" data-table="' + table + '" data-row="' + newId + '" data-range-col="' + col + '" inputmode="decimal" value="' + currentValue + '" size="6"></td>' +
+      '<td class="center"><input type="text" class="qtde-input" data-table="' + table + '" data-row="' + newId + '" inputmode="numeric" value="01" size="2"></td>' +
+      '<td class="center line-total-cell"><span class="currency-prefix">R$</span><span class="line-total" data-table="' + table + '" data-row="' + newId + '">0,00</span></td>' +
+      '<td>' + planoText + ' (faixa adicional)</td>' +
+      '<td class="detail"><button type="button" class="remove-range-btn">Remover linha</button></td>';
+
+    tr.insertAdjacentElement('afterend', newTr);
+
+    var newSel = newTr.querySelector('.row-range-select');
+    var newValor = newTr.querySelector('.valor-input');
+    var newQtde = newTr.querySelector('.qtde-input');
+    wireRangeSelect(newSel);
+    wireQtyClamp(newQtde);
+    wireRecalcInput(newValor);
+    wireRecalcInput(newQtde);
+    newTr.querySelector('.remove-range-btn').addEventListener('click', function(){
+      newTr.remove();
+      recalcTable(table);
+    });
+
+    recalcTable(table);
+  });
+}
+document.querySelectorAll('.add-range-btn').forEach(wireAddRangeBtn);
 </script>
 <script>
 document.querySelectorAll('.plan-picker').forEach(function(sel){
@@ -1023,199 +1116,8 @@ document.querySelectorAll('.row-toggle').forEach(function(cb){
   applyToggle();
 });
 </script>
-<div class="bitrix-modal-overlay" id="bitrixModal" style="display:none;">
-<div class="bitrix-modal">
-<div class="bitrix-modal-title">Verificar dados antes de enviar ao Bitrix</div>
-<div id="bitrixModalBody"></div>
-<div class="bitrix-modal-actions">
-<button type="button" class="bitrix-modal-cancel" onclick="fecharModalBitrix()">Cancelar</button>
-<button type="button" class="bitrix-modal-confirm" id="bitrixConfirmBtn">Confirmar e enviar</button>
-</div>
-<div class="bitrix-status" id="bitrixStatus"></div>
-</div>
-</div>
-<script id="bitrixSyncScript">
-var BITRIX_WEBHOOK_URL = 'https://atlasgr.bitrix24.com.br/rest/450/xa4srbrft9jpe880/';
 
-function extrairCampoPorRotulo(rotulo){
-  var candidatos = document.querySelectorAll('.sig-field, .fone-line');
-  for(var i=0; i<candidatos.length; i++){
-    var el = candidatos[i];
-    if(el.textContent.trim().indexOf(rotulo) === 0){
-      var spans = el.querySelectorAll('.rule, .editable-field-dark, .fone-seg, .rule-ddd, .rule-phone, .rule-uf');
-      var vals = [];
-      spans.forEach(function(s){
-        var t = s.textContent.replace(/\u00a0/g, '').trim();
-        if(t) vals.push(t);
-      });
-      return vals.join(' ');
-    }
-  }
-  return '';
-}
 
-function coletarDadosProposta(){
-  var nomeEl = document.getElementById('cover-client-field');
-  var cnpjEl = document.getElementById('cover-cnpj-field');
-  var nome = nomeEl ? nomeEl.textContent.replace(/\u00a0/g, '').trim() : '';
-  var cnpj = cnpjEl ? cnpjEl.textContent.replace(/\u00a0/g, '').trim() : '';
-  var email = extrairCampoPorRotulo('E-mail:');
-  var telefone = extrairCampoPorRotulo('Fone:');
-
-  var table = document.querySelector('table.pricing');
-  var tableId = table ? table.id : null;
-
-  var itens = [];
-  document.querySelectorAll('.row-toggle').forEach(function(cb){
-    if(cb.checked){
-      var opt = cb.closest('.item-picker-opt');
-      var label = opt ? opt.textContent.trim() : cb.dataset.row;
-      var priceInput = document.querySelector('.valor-input[data-row="'+cb.dataset.row+'"]');
-      var qtyInput = document.querySelector('.qtde-input[data-row="'+cb.dataset.row+'"]');
-      var lineTotal = document.querySelector('.line-total[data-row="'+cb.dataset.row+'"]');
-      itens.push({
-        label: label,
-        valor: priceInput ? priceInput.value : '',
-        qtde: qtyInput ? qtyInput.value : '',
-        total: lineTotal ? lineTotal.textContent : ''
-      });
-    }
-  });
-
-  var totalGeral = '0,00';
-  if(tableId){
-    var totalEl = document.getElementById('total-' + tableId);
-    if(totalEl) totalGeral = totalEl.textContent;
-  }
-
-  return {nome: nome, cnpj: cnpj, email: email, telefone: telefone, itens: itens, totalGeral: totalGeral};
-}
-
-function abrirVerificacaoBitrix(){
-  var dados = coletarDadosProposta();
-  var body = document.getElementById('bitrixModalBody');
-  var itensHtml = dados.itens.length
-    ? '<ul>' + dados.itens.map(function(i){
-        return '<li>' + i.label + ' \u2014 R$' + i.valor + ' x ' + i.qtde + ' = R$' + i.total + '</li>';
-      }).join('') + '</ul>'
-    : '<p><i>Nenhum item selecionado na proposta.</i></p>';
-  body.innerHTML =
-    '<div class="bitrix-field"><b>Nome do Cliente:</b> <span id="bitrixNomeDisplay">' + (dados.nome || '<i>(vazio)</i>') + '</span>' +
-      '<button type="button" class="bitrix-search-btn" onclick="buscarClienteBitrix(\'nome\')">Buscar por nome</button></div>' +
-    '<div class="bitrix-field"><b>CNPJ:</b> <span id="bitrixCnpjDisplay">' + (dados.cnpj || '<i>(vazio)</i>') + '</span>' +
-      '<button type="button" class="bitrix-search-btn" onclick="buscarClienteBitrix(\'cnpj\')">Buscar por CNPJ</button></div>' +
-    '<div class="bitrix-field"><b>ID da Empresa no Bitrix:</b> <input type="text" id="bitrixCompanyId" class="bitrix-id-input" placeholder="buscar ou digitar">' +
-      '<span id="bitrixSearchStatus" class="bitrix-search-status"></span></div>' +
-    '<div class="bitrix-field"><b>E-mail:</b> ' + (dados.email || '<i>(vazio)</i>') + '</div>' +
-    '<div class="bitrix-field"><b>Telefone:</b> ' + (dados.telefone || '<i>(vazio)</i>') + '</div>' +
-    '<div class="bitrix-field"><b>Itens selecionados:</b>' + itensHtml + '</div>' +
-    '<div class="bitrix-field"><b>Valor Total:</b> R$ ' + dados.totalGeral + '</div>';
-
-  var statusEl = document.getElementById('bitrixStatus');
-  statusEl.textContent = '';
-  statusEl.className = 'bitrix-status';
-  var btn = document.getElementById('bitrixConfirmBtn');
-  btn.disabled = false;
-  btn.textContent = 'Confirmar e enviar';
-  btn.onclick = function(){ enviarParaBitrix(dados); };
-
-  document.getElementById('bitrixModal').style.display = 'flex';
-}
-
-function buscarClienteBitrix(tipo){
-  var statusEl = document.getElementById('bitrixSearchStatus');
-  var idInput = document.getElementById('bitrixCompanyId');
-  var nome = document.getElementById('bitrixNomeDisplay').textContent.trim();
-  var cnpj = document.getElementById('bitrixCnpjDisplay').textContent.trim();
-  var filter = {};
-  if(tipo === 'nome'){
-    if(!nome){ statusEl.textContent = 'Preencha o nome na proposta primeiro.'; statusEl.className = 'bitrix-search-status bitrix-status-error'; return; }
-    filter['%TITLE'] = nome;
-  } else {
-    if(!cnpj){ statusEl.textContent = 'Preencha o CNPJ na proposta primeiro.'; statusEl.className = 'bitrix-search-status bitrix-status-error'; return; }
-    filter['UF_CRM_1785182242607'] = cnpj;
-  }
-  statusEl.textContent = 'Buscando...';
-  statusEl.className = 'bitrix-search-status';
-
-  fetch(BITRIX_WEBHOOK_URL + 'crm.company.list.json', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({filter: filter, select: ['ID', 'TITLE', 'UF_CRM_1785182242607']})
-  })
-  .then(function(res){ return res.json(); })
-  .then(function(json){
-    if(json.result && json.result.length){
-      var empresa = json.result[0];
-      idInput.value = empresa.ID;
-      var extra = json.result.length > 1 ? ' (' + json.result.length + ' resultados, usando o primeiro)' : '';
-      statusEl.textContent = 'Encontrado: ' + empresa.TITLE + ' \u2014 ID ' + empresa.ID + extra;
-      statusEl.className = 'bitrix-search-status bitrix-status-ok';
-    } else {
-      statusEl.textContent = 'Nenhuma empresa encontrada com esse ' + (tipo === 'nome' ? 'nome' : 'CNPJ') + '.';
-      statusEl.className = 'bitrix-search-status bitrix-status-error';
-    }
-  })
-  .catch(function(err){
-    statusEl.textContent = 'Erro na busca: ' + err.message;
-    statusEl.className = 'bitrix-search-status bitrix-status-error';
-  });
-}
-
-function fecharModalBitrix(){
-  document.getElementById('bitrixModal').style.display = 'none';
-}
-
-function enviarParaBitrix(dados){
-  var statusEl = document.getElementById('bitrixStatus');
-  var btn = document.getElementById('bitrixConfirmBtn');
-  btn.disabled = true;
-  statusEl.textContent = 'Enviando...';
-  statusEl.className = 'bitrix-status';
-
-  var titulo = 'Proposta - ' + (dados.nome || 'Cliente sem nome');
-  var valorNumerico = parseFloat((dados.totalGeral || '0').replace(/\./g, '').replace(',', '.')) || 0;
-  var comentario = dados.itens.map(function(i){
-    return i.label + ': R$' + i.valor + ' x ' + i.qtde + ' = R$' + i.total;
-  }).join('\n');
-
-  var idInput = document.getElementById('bitrixCompanyId');
-  var companyId = idInput && idInput.value.trim() ? parseInt(idInput.value.trim(), 10) : null;
-
-  var payload = {
-    fields: {
-      TITLE: titulo,
-      OPPORTUNITY: valorNumerico,
-      CURRENCY_ID: 'BRL',
-      COMMENTS: 'CNPJ: ' + dados.cnpj + '\nE-mail: ' + dados.email + '\nTelefone: ' + dados.telefone + '\n\nItens:\n' + comentario
-    }
-  };
-  if(companyId){ payload.fields.COMPANY_ID = companyId; }
-
-  fetch(BITRIX_WEBHOOK_URL + 'crm.deal.add.json', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify(payload)
-  })
-  .then(function(res){ return res.json(); })
-  .then(function(json){
-    if(json.result){
-      statusEl.textContent = 'Enviado com sucesso! Neg\u00f3cio criado no Bitrix (ID ' + json.result + ').';
-      statusEl.className = 'bitrix-status bitrix-status-ok';
-      btn.textContent = 'Enviado';
-    } else {
-      statusEl.textContent = 'Erro ao enviar: ' + (json.error_description || json.error || 'desconhecido');
-      statusEl.className = 'bitrix-status bitrix-status-error';
-      btn.disabled = false;
-    }
-  })
-  .catch(function(err){
-    statusEl.textContent = 'Erro de conex\u00e3o: ' + err.message;
-    statusEl.className = 'bitrix-status bitrix-status-error';
-    btn.disabled = false;
-  });
-}
-</script>
 <script>
 var reconhecimentoVoz = null;
 var campoAtivoVoz = null;
@@ -1489,180 +1391,62 @@ function toggleSidebar(){
   document.body.classList.toggle('sidebar-expanded');
 }
 </script>
-<script id="bitrixSearchScript">
-var atlasBxWebhook = "https://atlasgr.bitrix24.com.br/rest/450/gr94fas79p1nizci/";
 
-function buscarBitrixSidebar() {
-  var input = document.getElementById('bxSideSearch');
-  var term = input ? input.value.trim() : '';
-  if(!term) return;
-  
-  var btn = event ? event.target : null;
-  if(btn) btn.textContent = '...';
 
-  var pCompany = fetch(atlasBxWebhook + "crm.company.list.json", {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ filter: { "%TITLE": term }, select: ["ID", "TITLE"] })
-  }).then(function(r){ return r.json(); }).catch(function(){ return {result:[]}; });
-
-  var pLead = fetch(atlasBxWebhook + "crm.lead.list.json", {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ filter: { "%TITLE": term }, select: ["ID", "TITLE", "COMPANY_TITLE"] })
-  }).then(function(r){ return r.json(); }).catch(function(){ return {result:[]}; });
-
-  var pDeal = fetch(atlasBxWebhook + "crm.deal.list.json", {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ filter: { "%TITLE": term }, select: ["ID", "TITLE", "COMPANY_ID"] })
-  }).then(function(r){ return r.json(); }).catch(function(){ return {result:[]}; });
-
-  var pContact = fetch(atlasBxWebhook + "crm.contact.list.json", {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ filter: { "%NAME": term }, select: ["ID", "NAME", "LAST_NAME"] })
-  }).then(function(r){ return r.json(); }).catch(function(){ return {result:[]}; });
-
-  Promise.all([pCompany, pLead, pDeal, pContact]).then(function(results){
-    if(btn) btn.textContent = 'Buscar Cliente';
-    var sel = document.getElementById('bxSideResults');
-    sel.innerHTML = '<option value="">Selecione o cliente...</option>';
-    var count = 0;
-
-    // 1. Companies
-    if(results[0] && results[0].result && results[0].result.length > 0){
-      results[0].result.forEach(function(c){
-        count++;
-        var opt = document.createElement('option');
-        opt.value = c.ID;
-        opt.textContent = '[Empresa] ' + c.TITLE;
-        opt.dataset.type = 'company';
-        opt.dataset.title = c.TITLE;
-        sel.appendChild(opt);
-      });
-    }
-
-    // 2. Leads
-    if(results[1] && results[1].result && results[1].result.length > 0){
-      results[1].result.forEach(function(l){
-        count++;
-        var opt = document.createElement('option');
-        opt.value = l.ID;
-        var t = l.TITLE || l.COMPANY_TITLE || 'Lead #' + l.ID;
-        opt.textContent = '[Lead] ' + t;
-        opt.dataset.type = 'lead';
-        opt.dataset.title = t;
-        sel.appendChild(opt);
-      });
-    }
-
-    // 3. Deals
-    if(results[2] && results[2].result && results[2].result.length > 0){
-      results[2].result.forEach(function(d){
-        count++;
-        var opt = document.createElement('option');
-        opt.value = d.ID;
-        opt.textContent = '[Negócio] ' + d.TITLE;
-        opt.dataset.type = 'deal';
-        opt.dataset.title = d.TITLE;
-        opt.dataset.companyId = d.COMPANY_ID || '';
-        sel.appendChild(opt);
-      });
-    }
-
-    // 4. Contacts
-    if(results[3] && results[3].result && results[3].result.length > 0){
-      results[3].result.forEach(function(ct){
-        count++;
-        var opt = document.createElement('option');
-        opt.value = ct.ID;
-        var n = ((ct.NAME || '') + ' ' + (ct.LAST_NAME || '')).trim() || 'Contato #' + ct.ID;
-        opt.textContent = '[Contato] ' + n;
-        opt.dataset.type = 'contact';
-        opt.dataset.title = n;
-        sel.appendChild(opt);
-      });
-    }
-
-    if(count > 0){
-      sel.style.display = 'block';
-    } else {
-      sel.style.display = 'none';
-      alert("Nenhum cliente encontrado no Bitrix24 da Atlas GR.");
-    }
-  }).catch(function(err){
-    if(btn) btn.textContent = 'Buscar Cliente';
-    alert("Erro ao buscar no Bitrix24.");
-    console.error(err);
+<script>(function(){
+  var PASSWORD = "Atl@s";
+  var unlocked = false;
+  function unlockAll(){
+    unlocked = true;
+    document.querySelectorAll(".pw-locked").forEach(function(el){
+      if(el.tagName === "INPUT"){ el.removeAttribute("readonly"); }
+      else if(el.tagName !== "SELECT"){ el.setAttribute("contenteditable", "true"); }
+      el.classList.remove("pw-locked");
+    });
+  }
+  function tryUnlock(){
+    if(unlocked) return;
+    var pw = prompt("Este campo j\u00e1 foi preenchido pela Atlas. Digite a senha para alterar:");
+    if(pw === null) return;
+    if(pw === "Atl@s"){ unlockAll(); }
+    else { alert("Senha incorreta."); }
+  }
+  document.querySelectorAll(".pw-locked").forEach(function(el){
+    el.addEventListener("mousedown", function(e){
+      if(unlocked) return;
+      if(el.tagName === "SELECT"){ e.preventDefault(); }
+      tryUnlock();
+    });
+    el.addEventListener("keydown", function(e){
+      if(!unlocked && el.tagName === "SELECT"){ e.preventDefault(); }
+    });
   });
-}
-
-function selecionarBitrixSidebar() {
-  var sel = document.getElementById('bxSideResults');
-  var id = sel.value;
-  if(!id) return;
-  var opt = sel.options[sel.selectedIndex];
-  var title = opt.dataset.title || opt.text;
-
-  var copyBtn = document.getElementById('bxCopyBtn');
-  if(copyBtn) copyBtn.style.display = 'block';
-
-  var elNome = document.getElementById('cover-client-field');
-  if(elNome) {
-    elNome.textContent = title;
-    elNome.dispatchEvent(new Event('input', {bubbles:true}));
+})();</script><script>(function(){
+  var PASSWORD = "Atl@s";
+  var unlocked = false;
+  function unlockAll(){
+    unlocked = true;
+    document.querySelectorAll(".pw-locked").forEach(function(el){
+      if(el.tagName === "INPUT"){ el.removeAttribute("readonly"); }
+      else if(el.tagName !== "SELECT"){ el.setAttribute("contenteditable", "true"); }
+      el.classList.remove("pw-locked");
+    });
   }
-
-  var entityTypeMap = { 'lead': 1, 'deal': 2, 'contact': 3, 'company': 4 };
-  var typeId = entityTypeMap[opt.dataset.type] || 4;
-
-  var reqUrl = atlasBxWebhook + "crm.requisite.list.json";
-  fetch(reqUrl, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ filter: { "ENTITY_ID": id, "ENTITY_TYPE_ID": typeId }, select: ["RQ_CNPJ"] })
-  })
-  .then(function(r){ return r.json(); })
-  .then(function(reqData){
-    var finalCnpj = null;
-    if(reqData.result && reqData.result.length > 0){
-      for(var i=0; i<reqData.result.length; i++){
-        if(reqData.result[i].RQ_CNPJ) {
-          finalCnpj = reqData.result[i].RQ_CNPJ;
-          break;
-        }
-      }
-    }
-    if(finalCnpj) {
-      var elCnpj = document.getElementById('cover-cnpj-field');
-      if(elCnpj) {
-        elCnpj.textContent = finalCnpj;
-        elCnpj.dispatchEvent(new Event('input', {bubbles:true}));
-      }
-    }
-  }).catch(function(){});
-}
-
-function copiarBitrixSidebar() {
-  var nomeEl = document.getElementById('cover-client-field');
-  var cnpjEl = document.getElementById('cover-cnpj-field');
-  var nome = nomeEl ? nomeEl.textContent.replace(/\u00a0/g, '').trim() : '';
-  var cnpj = cnpjEl ? cnpjEl.textContent.replace(/\u00a0/g, '').trim() : '';
-  var texto = 'Cliente: ' + nome + (cnpj ? ('\nCNPJ: ' + cnpj) : '');
-  var btn = document.getElementById('bxCopyBtn');
-  function done(ok){
-    if(!btn) return;
-    var original = 'Copiar Dados';
-    btn.textContent = ok ? 'Copiado!' : 'Erro ao copiar';
-    setTimeout(function(){ btn.textContent = original; }, 1500);
+  function tryUnlock(){
+    if(unlocked) return;
+    var pw = prompt("Este campo j\u00e1 foi preenchido pela Atlas. Digite a senha para alterar:");
+    if(pw === null) return;
+    if(pw === "Atl@s"){ unlockAll(); }
+    else { alert("Senha incorreta."); }
   }
-  if(navigator.clipboard && navigator.clipboard.writeText){
-    navigator.clipboard.writeText(texto).then(function(){ done(true); }).catch(function(){ done(false); });
-  } else {
-    done(false);
-  }
-}
-</script>
-</body>
-</html>
+  document.querySelectorAll(".pw-locked").forEach(function(el){
+    el.addEventListener("mousedown", function(e){
+      if(unlocked) return;
+      if(el.tagName === "SELECT"){ e.preventDefault(); }
+      tryUnlock();
+    });
+    el.addEventListener("keydown", function(e){
+      if(!unlocked && el.tagName === "SELECT"){ e.preventDefault(); }
+    });
+  });
+})();</script></body></html>
