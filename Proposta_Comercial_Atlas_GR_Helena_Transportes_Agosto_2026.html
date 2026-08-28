@@ -226,6 +226,28 @@ body.sidebar-expanded{padding-left:250px;}
   overflow-y:auto;
 }
 .sidebar-panel.collapsed{display:none;}
+@media (max-width:640px){
+  body{padding-left:0 !important;}
+  body.sidebar-expanded{padding-left:0 !important;}
+  .app-sidebar{
+    top:auto;
+    bottom:14px;
+    left:10px;
+    transform:none;
+  }
+  .sidebar-toggle{
+    padding:0;
+    width:46px;
+    height:46px;
+    justify-content:center;
+    border-radius:50%;
+  }
+  .sidebar-toggle-label{display:none;}
+  .sidebar-panel{
+    width:min(190px, calc(100vw - 24px));
+    max-height:60vh;
+  }
+}
 .sidebar-title{
   font-family:'Montserrat',Arial,sans-serif;
   font-size:11px;
@@ -763,7 +785,7 @@ document.addEventListener('DOMContentLoaded', function(){
   var tables = new Set();
   document.querySelectorAll('.valor-input, .qtde-input').forEach(function(el){
     tables.add(el.dataset.table);
-    el.addEventListener('input', function(){ recalcTable(el.dataset.table); });
+    el.addEventListener('input', function(){ el.setAttribute('value', el.value); recalcTable(el.dataset.table); });
   });
   tables.forEach(recalcTable);
 
@@ -864,6 +886,8 @@ var ATLAS_PROFILE_RANGE_BOUNDS = {
 };
 function wireRangeSelect(sel){
   sel.addEventListener('change', function(){
+    Array.prototype.forEach.call(sel.options, function(opt){ opt.removeAttribute('selected'); });
+    if(sel.selectedIndex >= 0) sel.options[sel.selectedIndex].setAttribute('selected', '');
     var row = sel.dataset.row;
     var input = document.querySelector('.valor-input[data-row="'+row+'"]');
     var qtyInput = document.querySelector('.qtde-input[data-row="'+row+'"]');
@@ -899,7 +923,7 @@ function wireQtyClamp(q){
   });
 }
 function wireRecalcInput(el){
-  el.addEventListener('input', function(){ recalcTable(el.dataset.table); });
+  el.addEventListener('input', function(){ el.setAttribute('value', el.value); recalcTable(el.dataset.table); });
 }
 document.querySelectorAll('.row-range-select').forEach(wireRangeSelect);
 document.querySelectorAll('.qtde-input').forEach(wireQtyClamp);
@@ -1020,6 +1044,11 @@ function baixarPropostaPreenchida(){
     if(cb.checked) checkedRows[cb.dataset.row] = true;
   });
 
+  if(Object.keys(checkedRows).length === 0){
+    alert('Nenhum servico foi selecionado em "O que esta proposta vai incluir?". Marque ao menos um item antes de baixar, ou a tabela de valores ficara vazia no documento final.');
+    return;
+  }
+
   var liveCanvas = document.getElementById('sigPad');
   var sigDataUrl = null;
   if(liveCanvas){
@@ -1131,6 +1160,7 @@ function baixarPropostaPreenchida(){
 <script>
 document.querySelectorAll('.row-toggle').forEach(function(cb){
   function applyToggle(){
+    if(cb.checked) cb.setAttribute('checked', ''); else cb.removeAttribute('checked');
     var tr = document.querySelector('tr.pricing-row[data-row="'+cb.dataset.row+'"]');
     if(tr){
       tr.style.display = cb.checked ? '' : 'none';
