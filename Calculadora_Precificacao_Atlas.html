@@ -115,6 +115,10 @@ table.pricing td.center{text-align:center;}
   color:#2c2c2c;text-align:right;padding:1px 2px;
 }
 .min-input:focus{outline:none;border-bottom:1.4px solid var(--atlas-orange);}
+.min-auto-tag{font-size:10px;font-weight:600;color:#999;margin-left:4px;}
+.min-reset-btn{background:none;border:none;color:var(--atlas-orange);font-size:10.5px;font-weight:800;cursor:pointer;margin-left:8px;padding:2px 4px;}
+.min-reset-btn:hover{text-decoration:underline;}
+.min-reset-btn[hidden]{display:none;}
 .min-badge{background:var(--atlas-yellow);color:#3a2c00;font-size:10px;font-weight:800;padding:3px 9px;border-radius:20px;letter-spacing:.2px;}
 .min-badge[hidden]{display:none;}
 .tag-recorrente{background:#fff4ee;color:var(--atlas-orange);font-size:9.5px;font-weight:800;padding:2px 8px;border-radius:20px;margin-left:6px;letter-spacing:.2px;}
@@ -240,7 +244,7 @@ var PLANOS = [
 
 var PRODUCTS = [
   {
-    id:'gr', nome:'Gerenciamento de Risco (GR)', included:true, minimo:120.00,
+    id:'gr', nome:'Gerenciamento de Risco (GR)', included:true,
     desc:'Monitoramento de veículos e gestão de riscos 24 horas por 7 dias da semana.',
     fleetFields:{veiculos:['gr_veiculo','gr_rotograma'], viagens:['gr_viagem']},
     items:[
@@ -251,7 +255,7 @@ var PRODUCTS = [
     ]
   },
   {
-    id:'profile', nome:'Atlas PROFILE — Perfil Securitário', included:true, minimo:59.90,
+    id:'profile', nome:'Atlas PROFILE — Perfil Securitário', included:true,
     desc:'Cadastro, consulta e análise de perfil de motoristas, autônomos e demais profissionais.',
     fleetFields:{usuarios:['profile_cpf_rh']},
     items:[
@@ -269,7 +273,7 @@ var PRODUCTS = [
     ]
   },
   {
-    id:'torre', nome:'Torre de Controle Logística (Connect)', included:false, minimo:0,
+    id:'torre', nome:'Torre de Controle Logística (Connect)', included:false,
     desc:'Software de gestão de viagens com alertas, eventos programados e Gestão à Vista em tempo real.',
     fleetFields:{veiculos:['torre_veiculo'], viagens:['torre_viagem']},
     items:[
@@ -278,7 +282,7 @@ var PRODUCTS = [
     ]
   },
   {
-    id:'analytics', nome:'Atlas Analytics (BI)', included:false, minimo:0,
+    id:'analytics', nome:'Atlas Analytics (BI)', included:false,
     desc:'Indicadores e relatórios de performance da operação (Transit Time, alertas, gestão de alvos).',
     fleetFields:{veiculos:['analytics_veiculo'], viagens:['analytics_viagem'], usuarios:['analytics_usuario']},
     items:[
@@ -349,8 +353,8 @@ function renderProducts(){
         '<th style="width:32%;text-align:left;">Serviço</th><th style="width:14%;">Valor</th><th style="width:10%;">Qtde</th><th style="width:18%;">Unidade</th><th style="width:16%;">Subtotal</th>' +
       '</tr></thead><tbody>' + p.items.map(itemRowHtml).join('') + '</tbody></table></div>' +
       '<div class="prod-min-row">' +
-        '<span>Faturamento mínimo mensal deste produto</span>' +
-        '<span><span class="currency-prefix">R$</span> <input type="text" class="min-input" data-product="'+p.id+'" inputmode="decimal" value="'+formatBR(p.minimo)+'"></span>' +
+        '<span>Faturamento mínimo mensal deste produto <span class="min-auto-tag" data-product="'+p.id+'">(40% automático do subtotal)</span></span>' +
+        '<span><span class="currency-prefix">R$</span> <input type="text" class="min-input" data-product="'+p.id+'" inputmode="decimal" value="0,00"> <button type="button" class="min-reset-btn no-print" data-product="'+p.id+'" hidden>↺ voltar ao automático</button></span>' +
       '</div>' +
       '<div class="prod-subtotal-row">' +
         '<span>Subtotal dos itens: <b class="calc-subtotal" data-product="'+p.id+'">R$ 0,00</b></span>' +
@@ -380,6 +384,8 @@ function renderAdicionais(){
 
 /* ---------- CÁLCULO ---------- */
 var lastBreakdown = [];
+var MIN_PERCENT = 0.40; // faturamento mínimo padrão = 40% do subtotal calculado do produto
+var minTouched = {}; // data-product -> true quando o vendedor editou o mínimo manualmente
 
 function recalcAll(){
   var totalRecorrente = 0;
@@ -399,7 +405,11 @@ function recalcAll(){
       el('.line-total[data-row="'+item.id+'"]').textContent = formatBR(lt);
       subtotal += lt;
     });
+
     var minEl = el('.min-input[data-product="'+p.id+'"]');
+    if(!minTouched[p.id]){
+      minEl.value = formatBR(subtotal * MIN_PERCENT);
+    }
     var minimo = parseBR(minEl.value);
     var minApplied = minimo > 0 && subtotal > 0 && subtotal < minimo;
     var totalProduto = subtotal > 0 ? Math.max(subtotal, minimo) : 0;
@@ -407,6 +417,8 @@ function recalcAll(){
     el('.calc-subtotal[data-product="'+p.id+'"]').textContent = 'R$ ' + formatBR(subtotal);
     el('.prod-total[data-product="'+p.id+'"]').textContent = 'R$ ' + formatBR(totalProduto);
     el('.min-badge[data-product="'+p.id+'"]').hidden = !minApplied;
+    el('.min-auto-tag[data-product="'+p.id+'"]').hidden = !!minTouched[p.id];
+    el('.min-reset-btn[data-product="'+p.id+'"]').hidden = !minTouched[p.id];
     el('.prod-card[data-product="'+p.id+'"]').classList.toggle('prod-disabled', !included);
 
     if(included && totalProduto > 0){
@@ -523,12 +535,21 @@ document.addEventListener('DOMContentLoaded', function(){
   if(params.get('cnpj')) el('#cliCnpj').value = params.get('cnpj');
 
   el('#calcRoot').addEventListener('input', function(e){
+    if(e.target.classList.contains('min-input')){
+      minTouched[e.target.dataset.product] = true;
+    }
     if(e.target.classList.contains('valor-input') || e.target.classList.contains('qtde-input') || e.target.classList.contains('min-input')){
       recalcAll();
     }
   });
   el('#calcRoot').addEventListener('change', function(e){
     if(e.target.classList.contains('prod-include')) recalcAll();
+  });
+  el('#calcRoot').addEventListener('click', function(e){
+    if(e.target.classList.contains('min-reset-btn')){
+      minTouched[e.target.dataset.product] = false;
+      recalcAll();
+    }
   });
 
   el('#btnAplicarFrota').addEventListener('click', aplicarFrota);
