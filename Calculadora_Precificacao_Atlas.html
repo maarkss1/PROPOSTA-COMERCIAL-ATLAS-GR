@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atlas GR — Calculadora de Precificação</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap');
+:root{
+  --atlas-orange:#FF5618; --atlas-orange-2:#FF8008; --atlas-yellow:#FFC500; --atlas-dark:#333333;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:'Montserrat',Arial,sans-serif;
+  background:#f0efee;
+  color:#2c2c2c;
+  padding-bottom:150px;
+}
+a{color:inherit;}
+
+/* ---------- TOPBAR ---------- */
+.topbar{position:relative;background:var(--atlas-orange);color:#fff;overflow:hidden;padding:22px 20px 58px;}
+.topbar-diagonal{position:absolute;inset:0;background:var(--atlas-orange-2);clip-path:polygon(62% 0,100% 0,100% 100%,34% 100%);z-index:0;}
+.topbar-inner{position:relative;z-index:1;max-width:1080px;margin:0 auto;}
+.topbar-back{font-size:12px;color:#fff;opacity:.9;text-decoration:none;display:inline-flex;align-items:center;gap:5px;font-weight:600;}
+.topbar-back:hover{opacity:1;text-decoration:underline;}
+.topbar-title{font-size:23px;font-weight:800;letter-spacing:.3px;margin:14px 0 4px;}
+.topbar-sub{font-size:12.5px;opacity:.92;max-width:640px;line-height:1.5;}
+
+/* ---------- LAYOUT ---------- */
+.container{max-width:1080px;margin:-34px auto 0;padding:0 20px;position:relative;z-index:2;}
+.card{background:#fff;border-radius:12px;box-shadow:0 6px 26px rgba(0,0,0,.09);padding:22px 24px;margin-bottom:18px;}
+.card-title{font-size:15px;font-weight:800;color:var(--atlas-dark);margin:0 0 3px;}
+.card-desc{font-size:12px;color:#818181;margin-bottom:16px;line-height:1.5;}
+
+/* ---------- CLIENT / FLEET CARD ---------- */
+.field-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin-bottom:16px;}
+.field label{display:block;font-size:11.5px;font-weight:700;color:#555;margin-bottom:6px;letter-spacing:.2px;}
+.field input{
+  width:100%;border:1.6px solid #e4d9d3;border-radius:8px;padding:10px 12px;
+  font-family:'Montserrat',Arial,sans-serif;font-size:13px;color:#222;background:#fffaf8;
+  outline:none;transition:border-color .15s;
+}
+.field input:focus{border-color:var(--atlas-orange);background:#fff;}
+.btn{
+  display:inline-flex;align-items:center;gap:6px;border:none;border-radius:8px;
+  padding:10px 16px;font-family:'Montserrat',Arial,sans-serif;font-size:12.5px;font-weight:800;
+  cursor:pointer;transition:filter .15s,transform .15s;letter-spacing:.2px;
+}
+.btn:hover{filter:brightness(.94);transform:translateY(-1px);}
+.btn:active{transform:translateY(0);}
+.btn-primary{background:var(--atlas-orange);color:#fff;}
+.btn-dark{background:var(--atlas-dark);color:#fff;}
+.btn-ghost{background:#f4f2f1;color:var(--atlas-dark);}
+
+/* ---------- PLANOS (referência) ---------- */
+.plans-summary{cursor:pointer;font-size:12.5px;font-weight:700;color:var(--atlas-orange);padding:2px 0;}
+.plans-wrap{display:flex;gap:14px;flex-wrap:wrap;margin-top:16px;}
+.plan-card{flex:1;min-width:220px;background:#fff;border:1px solid #eee;box-shadow:0 1px 6px rgba(0,0,0,.08);display:flex;flex-direction:column;border-radius:8px;overflow:hidden;}
+.plan-head{padding:12px 10px;text-align:center;color:#fff;}
+.plan-head .pname{font-weight:800;font-size:14px;letter-spacing:.5px;}
+.plan-head .psub{font-size:9.5px;opacity:.9;margin-top:2px;}
+.plan-standard .plan-head{background:var(--atlas-yellow);color:#3a2c00;}
+.plan-pro .plan-head{background:var(--atlas-orange);}
+.plan-premium .plan-head{background:var(--atlas-dark);}
+.plan-body{padding:12px 14px;font-size:11.5px;line-height:1.5;color:#333;}
+.plan-body ul{margin:0;padding-left:16px;}
+.plan-body li{margin-bottom:3px;}
+.plan-add{margin-top:8px;font-size:10.5px;color:#777;}
+
+/* ---------- PRODUCT CARDS ---------- */
+.prod-head{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px;margin-bottom:2px;}
+.prod-toggle{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:800;color:var(--atlas-dark);cursor:pointer;user-select:none;}
+.prod-toggle input[type=checkbox]{width:18px;height:18px;accent-color:var(--atlas-orange);cursor:pointer;}
+.prod-card.prod-disabled{opacity:.48;}
+.prod-card.prod-disabled .table-wrap{pointer-events:none;}
+
+.table-wrap{overflow-x:auto;}
+table.pricing{width:100%;border-collapse:collapse;margin-bottom:4px;font-size:11.5px;min-width:560px;}
+table.pricing th{
+  background:var(--atlas-orange);color:#fff;font-weight:700;
+  padding:9px 8px;text-align:center;border:1px solid var(--atlas-orange);font-size:10.8px;
+}
+table.pricing td{border:1px solid #ddd;padding:8px 8px;vertical-align:middle;color:#2c2c2c;background:#fff;}
+table.pricing td.svc{font-weight:600;text-align:left;}
+table.pricing td.center{text-align:center;}
+.unit-label{font-size:10px;color:#8a8a8a;}
+.valor-input{
+  width:66px;border:none;border-bottom:1.4px dashed #f0a980;background:transparent;
+  font-family:'Montserrat',Arial,sans-serif;font-size:11.5px;font-weight:600;
+  color:#2c2c2c;text-align:right;padding:1px 2px;
+}
+.qtde-input{
+  width:52px;border:none;border-bottom:1.4px dashed #f0a980;background:transparent;
+  font-family:'Montserrat',Arial,sans-serif;font-size:11.5px;font-weight:600;
+  color:#2c2c2c;text-align:center;padding:1px 2px;
+}
+.valor-input:hover,.qtde-input:hover{background:#fff4ee;}
+.valor-input:focus,.qtde-input:focus{outline:none;border-bottom:1.4px solid var(--atlas-orange);background:#fff4ee;}
+.qtde-input[readonly]{opacity:.5;}
+.line-total-cell{background:#fff7f2;}
+.line-total{font-weight:800;color:var(--atlas-orange);}
+.currency-prefix{color:#888;font-size:10.2px;margin-right:1px;}
+
+.prod-min-row,.prod-subtotal-row{
+  display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px 18px;align-items:center;
+  padding-top:10px;margin-top:6px;border-top:1px dashed #e8e4e2;font-size:12px;font-weight:700;color:var(--atlas-dark);
+}
+.prod-subtotal-row{font-size:12.5px;}
+.prod-subtotal-row b{color:var(--atlas-orange);}
+.min-input{
+  width:74px;border:none;border-bottom:1.4px dashed #f0a980;background:transparent;
+  font-family:'Montserrat',Arial,sans-serif;font-size:12px;font-weight:700;
+  color:#2c2c2c;text-align:right;padding:1px 2px;
+}
+.min-input:focus{outline:none;border-bottom:1.4px solid var(--atlas-orange);}
+.min-badge{background:var(--atlas-yellow);color:#3a2c00;font-size:10px;font-weight:800;padding:3px 9px;border-radius:20px;letter-spacing:.2px;}
+.min-badge[hidden]{display:none;}
+.tag-recorrente{background:#fff4ee;color:var(--atlas-orange);font-size:9.5px;font-weight:800;padding:2px 8px;border-radius:20px;margin-left:6px;letter-spacing:.2px;}
+.tag-pontual{background:#f4f2f1;color:#666;font-size:9.5px;font-weight:800;padding:2px 8px;border-radius:20px;margin-left:6px;letter-spacing:.2px;}
+
+/* ---------- SUMMARY BAR ---------- */
+.summary-bar{
+  position:fixed;left:0;right:0;bottom:0;background:var(--atlas-dark);color:#fff;
+  padding:12px 20px;display:flex;justify-content:center;z-index:50;box-shadow:0 -6px 22px rgba(0,0,0,.28);
+}
+.summary-inner{width:100%;max-width:1080px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px 22px;}
+.summary-totals{display:flex;gap:22px;flex-wrap:wrap;}
+.summary-item .lbl{font-size:9.5px;opacity:.75;letter-spacing:.3px;text-transform:uppercase;}
+.summary-item .val{font-size:16px;font-weight:800;}
+.summary-item.main .val{color:var(--atlas-yellow);font-size:19px;}
+.summary-actions{display:flex;gap:8px;flex-wrap:wrap;}
+.toast{
+  position:fixed;left:50%;bottom:88px;transform:translateX(-50%) translateY(10px);
+  background:var(--atlas-dark);color:#fff;padding:10px 18px;border-radius:8px;font-size:12.5px;font-weight:700;
+  box-shadow:0 6px 20px rgba(0,0,0,.3);opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:100;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ---------- PRINT ---------- */
+@media print{
+  body{padding-bottom:0;background:#fff;}
+  .no-print{display:none !important;}
+  .topbar{padding-bottom:26px;}
+  .container{margin-top:-14px;}
+  .card{box-shadow:none;border:1px solid #ddd;break-inside:avoid;}
+  .prod-card.prod-disabled{display:none;}
+}
+
+@media (max-width:640px){
+  .summary-inner{flex-direction:column;align-items:stretch;}
+  .summary-totals{justify-content:space-between;}
+  .summary-actions{justify-content:stretch;}
+  .summary-actions .btn{flex:1;justify-content:center;}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-diagonal"></div>
+  <div class="topbar-inner">
+    <a class="topbar-back no-print" href="Selecionar_Proposta_Atlas.html">← Voltar para propostas</a>
+    <div class="topbar-title">CALCULADORA DE PRECIFICAÇÃO</div>
+    <div class="topbar-sub">Monte o orçamento de Gerenciamento de Risco, Atlas PROFILE, Torre de Controle Logística e adicionais antes de gerar a proposta comercial.</div>
+  </div>
+</div>
+
+<div class="container" id="calcRoot">
+
+  <div class="card">
+    <div class="card-title">Dados do cliente</div>
+    <div class="card-desc">Usados apenas como referência no resumo e na impressão do orçamento.</div>
+    <div class="field-grid">
+      <div class="field"><label for="cliNome">Nome do cliente</label><input id="cliNome" type="text" placeholder="Ex: Transportadora Silva Ltda"></div>
+      <div class="field"><label for="cliCnpj">CNPJ</label><input id="cliCnpj" type="text" placeholder="XX.XXX.XXX/XXXX-XX"></div>
+      <div class="field"><label for="cliVendedor">Responsável comercial</label><input id="cliVendedor" type="text" placeholder="Seu nome"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Frota de referência</div>
+    <div class="card-desc">Preencha uma vez e aplique às quantidades de todos os produtos abaixo. Você ainda pode ajustar item a item depois.</div>
+    <div class="field-grid">
+      <div class="field"><label for="fleetVeiculos">Nº de veículos (frota própria)</label><input id="fleetVeiculos" type="text" inputmode="numeric" placeholder="0"></div>
+      <div class="field"><label for="fleetViagens">Nº de viagens/terceiros por mês</label><input id="fleetViagens" type="text" inputmode="numeric" placeholder="0"></div>
+      <div class="field"><label for="fleetUsuarios">Nº de usuários com login</label><input id="fleetUsuarios" type="text" inputmode="numeric" placeholder="0"></div>
+    </div>
+    <button type="button" class="btn btn-dark no-print" id="btnAplicarFrota">Aplicar às quantidades dos produtos</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Planos de atendimento — referência</div>
+    <details>
+      <summary class="plans-summary">Ver detalhamento dos planos STANDARD / PRO / PREMIUM</summary>
+      <div class="plans-wrap" id="plansWrap"></div>
+    </details>
+  </div>
+
+  <div id="productsWrap"></div>
+
+  <div class="card">
+    <div class="card-title">Taxas e adicionais</div>
+    <div class="card-desc">Itens cobrados sob demanda ou como taxa adicional ao serviço contratado.</div>
+    <div class="table-wrap">
+      <table class="pricing">
+        <thead><tr><th style="width:34%;text-align:left;">Serviço</th><th style="width:14%;">Valor</th><th style="width:12%;">Qtde</th><th style="width:16%;">Unidade</th><th style="width:16%;">Subtotal</th></tr></thead>
+        <tbody id="adicionaisBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast no-print" id="toast"></div>
+
+<div class="summary-bar no-print">
+  <div class="summary-inner">
+    <div class="summary-totals">
+      <div class="summary-item"><div class="lbl">Recorrente / mês</div><div class="val" id="sumRecorrente">R$ 0,00</div></div>
+      <div class="summary-item"><div class="lbl">Valores pontuais</div><div class="val" id="sumPontual">R$ 0,00</div></div>
+      <div class="summary-item main"><div class="lbl">Total geral</div><div class="val" id="sumGeral">R$ 0,00</div></div>
+    </div>
+    <div class="summary-actions">
+      <button type="button" class="btn btn-ghost" id="btnLimpar">Limpar tudo</button>
+      <button type="button" class="btn btn-ghost" id="btnCopiar">Copiar resumo</button>
+      <button type="button" class="btn btn-primary" id="btnImprimir">Imprimir / Salvar PDF</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ---------- DADOS BASE (valores-padrão das propostas Atlas GR — editáveis pelo vendedor) ---------- */
+var PLANOS = [
+  {id:'standard', nome:'STANDARD', itens:['Personalização de até 2 operações','Acesso até 20 usuários','Telas Panorâmica e Mapa Gerencial','Macros Padrão Atlas','Notificação de alertas via WhatsApp','Treinamento online (1 por ano)','P.P.A (Procedimento Padrão Atlas)','Monitoramento com SM','Relatórios completos','Integração de SM']},
+  {id:'pro', nome:'PRO', itens:['Personalização de até 5 operações','Acesso ilimitado de usuários','Telas Panorâmica e Mapa Gerencial','Macros personalizadas','Notificações de alerta via WhatsApp e e-mail','Treinamento online (3 por ano)','Atendimento de pós-venda','Atlas Analytics Padrão','Relatórios completos','Integração de SM']},
+  {id:'premium', nome:'PREMIUM', itens:['Tudo do plano PRO','Treinamento de motoristas e ECVC','Monitoramento sem SM','Rastreamento sem SM (desengate e Jammer)','Visita de pós-venda','Atlas Analytics Personalizado','Plano de viagem para motoristas']}
+];
+
+var PRODUCTS = [
+  {
+    id:'gr', nome:'Gerenciamento de Risco (GR)', included:true, minimo:120.00,
+    desc:'Monitoramento de veículos e gestão de riscos 24 horas por 7 dias da semana.',
+    fleetFields:{veiculos:['gr_veiculo','gr_rotograma'], viagens:['gr_viagem']},
+    items:[
+      {id:'gr_veiculo', label:'Monitoramento — por veículo/mês', unidade:'veículo(s)/mês', valor:120.00},
+      {id:'gr_viagem', label:'Operação de terceiros — por viagem', unidade:'viagem(ns)/mês', valor:40.00},
+      {id:'gr_checklist', label:'Checklist de sensores/atuadores — por demanda', unidade:'demanda(s)/mês', valor:5.90},
+      {id:'gr_rotograma', label:'Envio de rotograma ao motorista', unidade:'veículo(s)/mês', valor:3.90}
+    ]
+  },
+  {
+    id:'profile', nome:'Atlas PROFILE — Perfil Securitário', included:true, minimo:59.90,
+    desc:'Cadastro, consulta e análise de perfil de motoristas, autônomos e demais profissionais.',
+    fleetFields:{usuarios:['profile_cpf_rh']},
+    items:[
+      {id:'profile_objeto', label:'Por objeto pesquisado (frota e agregados)', unidade:'objeto(s)', valor:23.90},
+      {id:'profile_integrada', label:'Por pesquisa integrada (autônomos)', unidade:'pesquisa(s)', valor:31.90},
+      {id:'profile_cpf_rh', label:'Por CPF pesquisado (linha RH)', unidade:'CPF(s)', valor:23.90},
+      {id:'profile_cnh', label:'Por CNH pesquisada', unidade:'CNH(s)', valor:9.90},
+      {id:'profile_consulta', label:'Por consulta (genérica)', unidade:'consulta(s)', valor:4.90},
+      {id:'profile_erro', label:'Por erro de parâmetro', unidade:'ocorrência(s)', valor:4.90},
+      {id:'profile_rdo', label:'Pesquisa avançada/RDO (combo 6 estados)', unidade:'pesquisa(s)', valor:4.90},
+      {id:'profile_faceid_obj', label:'Verificação Face ID (objeto)', unidade:'verificação(ões)', valor:30.50},
+      {id:'profile_faceid_int', label:'Verificação Face ID (integrada)', unidade:'verificação(ões)', valor:41.50},
+      {id:'profile_financeira', label:'Consulta financeira', unidade:'consulta(s)', valor:9.20},
+      {id:'profile_vitimologia', label:'Pesquisa de vitimologia', unidade:'pesquisa(s)', valor:69.90}
+    ]
+  },
+  {
+    id:'torre', nome:'Torre de Controle Logística (Connect)', included:false, minimo:0,
+    desc:'Software de gestão de viagens com alertas, eventos programados e Gestão à Vista em tempo real.',
+    fleetFields:{veiculos:['torre_veiculo'], viagens:['torre_viagem']},
+    items:[
+      {id:'torre_veiculo', label:'Por veículo/mês (frota mínima)', unidade:'veículo(s)/mês', valor:34.90},
+      {id:'torre_viagem', label:'Por viagem/terceiros', unidade:'viagem(ns)/mês', valor:8.90}
+    ]
+  },
+  {
+    id:'analytics', nome:'Atlas Analytics (BI)', included:false, minimo:0,
+    desc:'Indicadores e relatórios de performance da operação (Transit Time, alertas, gestão de alvos).',
+    fleetFields:{veiculos:['analytics_veiculo'], viagens:['analytics_viagem'], usuarios:['analytics_usuario']},
+    items:[
+      {id:'analytics_veiculo', label:'Por veículo/mês', unidade:'veículo(s)/mês', valor:4.90},
+      {id:'analytics_viagem', label:'Por viagem/terceiro', unidade:'viagem(ns)/mês', valor:0.90},
+      {id:'analytics_usuario', label:'Por usuário/mês (login individual)', unidade:'usuário(s)/mês', valor:14.90}
+    ]
+  }
+];
+
+var ADICIONAIS = [
+  {id:'autotrac', label:'AUTOTRAC — integração de rastreador de terceiros', unidade:'veículo(s)/mês', valor:14.45, tipo:'recorrente', fleetFields:{veiculos:true}},
+  {id:'pronta_resposta', label:'Pronta-Resposta (até 3 horas)', unidade:'acionamento(s)', valor:1300.00, tipo:'pontual'},
+  {id:'pronta_resposta_h', label:'Pronta-Resposta — hora excedente', unidade:'hora(s)', valor:180.00, tipo:'pontual'},
+  {id:'escolta', label:'Escolta (valor por km combinado)', unidade:'km rodado', valor:0, tipo:'pontual'},
+  {id:'dev_sob_demanda', label:'Desenvolvimento sob demanda', unidade:'hora(s)', valor:250.00, tipo:'pontual'},
+  {id:'implantacao', label:'Implantação / treinamento (valor único)', unidade:'—', valor:0, tipo:'pontual', qtdFixa:true}
+];
+
+/* ---------- HELPERS ---------- */
+function parseBR(v){
+  if(!v) return 0;
+  v = String(v).replace(/[^0-9,.-]/g,'').replace(/\./g,'').replace(',', '.');
+  var n = parseFloat(v);
+  return isNaN(n) ? 0 : n;
+}
+function parseQtd(v){
+  var n = parseInt(String(v||'').replace(/[^0-9]/g,''), 10);
+  return isNaN(n) ? 0 : n;
+}
+function formatBR(n){
+  return n.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+function el(sel){ return document.querySelector(sel); }
+function els(sel){ return document.querySelectorAll(sel); }
+
+/* ---------- RENDER ---------- */
+function renderPlanos(){
+  var wrap = el('#plansWrap');
+  wrap.innerHTML = PLANOS.map(function(p){
+    return '<div class="plan-card plan-'+p.id+'">' +
+      '<div class="plan-head"><div class="pname">'+p.nome+'</div><div class="psub">Detalhamento do plano</div></div>' +
+      '<div class="plan-body"><ul>'+p.itens.map(function(i){return '<li>'+i+'</li>';}).join('')+'</ul>' +
+      '<div class="plan-add"><b>Adicional:</b> regras conforme apólice.</div></div>' +
+    '</div>';
+  }).join('');
+}
+
+function itemRowHtml(item){
+  return '<tr data-row="'+item.id+'">' +
+    '<td class="svc">'+item.label+'</td>' +
+    '<td class="center"><span class="currency-prefix">R$</span><input type="text" class="valor-input" data-row="'+item.id+'" inputmode="decimal" value="'+formatBR(item.valor)+'"></td>' +
+    '<td class="center"><input type="text" class="qtde-input" data-row="'+item.id+'" inputmode="numeric" value="0" placeholder="0"></td>' +
+    '<td class="center unit-label">'+item.unidade+'</td>' +
+    '<td class="center line-total-cell"><span class="currency-prefix">R$</span><span class="line-total" data-row="'+item.id+'">0,00</span></td>' +
+  '</tr>';
+}
+
+function renderProducts(){
+  var wrap = el('#productsWrap');
+  wrap.innerHTML = PRODUCTS.map(function(p){
+    return '<div class="card prod-card" data-product="'+p.id+'">' +
+      '<div class="prod-head">' +
+        '<label class="prod-toggle"><input type="checkbox" class="prod-include" data-product="'+p.id+'" '+(p.included?'checked':'')+'> <span>'+p.nome+'</span></label>' +
+      '</div>' +
+      '<div class="card-desc">'+p.desc+'</div>' +
+      '<div class="table-wrap"><table class="pricing"><thead><tr>' +
+        '<th style="width:32%;text-align:left;">Serviço</th><th style="width:14%;">Valor</th><th style="width:10%;">Qtde</th><th style="width:18%;">Unidade</th><th style="width:16%;">Subtotal</th>' +
+      '</tr></thead><tbody>' + p.items.map(itemRowHtml).join('') + '</tbody></table></div>' +
+      '<div class="prod-min-row">' +
+        '<span>Faturamento mínimo mensal deste produto</span>' +
+        '<span><span class="currency-prefix">R$</span> <input type="text" class="min-input" data-product="'+p.id+'" inputmode="decimal" value="'+formatBR(p.minimo)+'"></span>' +
+      '</div>' +
+      '<div class="prod-subtotal-row">' +
+        '<span>Subtotal dos itens: <b class="calc-subtotal" data-product="'+p.id+'">R$ 0,00</b></span>' +
+        '<span class="min-badge" data-product="'+p.id+'" hidden>Mínimo aplicado</span>' +
+        '<span>Total do produto: <b class="prod-total" data-product="'+p.id+'">R$ 0,00</b></span>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function renderAdicionais(){
+  var body = el('#adicionaisBody');
+  body.innerHTML = ADICIONAIS.map(function(a){
+    var tag = a.tipo === 'recorrente' ? '<span class="tag-recorrente">mensal</span>' : '<span class="tag-pontual">pontual</span>';
+    var qtdCell = a.qtdFixa
+      ? '<input type="text" class="qtde-input" data-row="'+a.id+'" value="1" readonly>'
+      : '<input type="text" class="qtde-input" data-row="'+a.id+'" inputmode="numeric" value="0" placeholder="0">';
+    return '<tr data-row="'+a.id+'">' +
+      '<td class="svc">'+a.label+tag+'</td>' +
+      '<td class="center"><span class="currency-prefix">R$</span><input type="text" class="valor-input" data-row="'+a.id+'" inputmode="decimal" value="'+formatBR(a.valor)+'"></td>' +
+      '<td class="center">'+qtdCell+'</td>' +
+      '<td class="center unit-label">'+a.unidade+'</td>' +
+      '<td class="center line-total-cell"><span class="currency-prefix">R$</span><span class="line-total" data-row="'+a.id+'">0,00</span></td>' +
+    '</tr>';
+  }).join('');
+}
+
+/* ---------- CÁLCULO ---------- */
+var lastBreakdown = [];
+
+function recalcAll(){
+  var totalRecorrente = 0;
+  var totalPontual = 0;
+  var breakdown = [];
+
+  PRODUCTS.forEach(function(p){
+    var includeEl = el('.prod-include[data-product="'+p.id+'"]');
+    var included = includeEl.checked;
+    var subtotal = 0;
+    p.items.forEach(function(item){
+      var valorEl = el('.valor-input[data-row="'+item.id+'"]');
+      var qtdEl = el('.qtde-input[data-row="'+item.id+'"]');
+      var valor = parseBR(valorEl.value);
+      var qtd = parseQtd(qtdEl.value);
+      var lt = valor * qtd;
+      el('.line-total[data-row="'+item.id+'"]').textContent = formatBR(lt);
+      subtotal += lt;
+    });
+    var minEl = el('.min-input[data-product="'+p.id+'"]');
+    var minimo = parseBR(minEl.value);
+    var minApplied = minimo > 0 && subtotal > 0 && subtotal < minimo;
+    var totalProduto = subtotal > 0 ? Math.max(subtotal, minimo) : 0;
+
+    el('.calc-subtotal[data-product="'+p.id+'"]').textContent = 'R$ ' + formatBR(subtotal);
+    el('.prod-total[data-product="'+p.id+'"]').textContent = 'R$ ' + formatBR(totalProduto);
+    el('.min-badge[data-product="'+p.id+'"]').hidden = !minApplied;
+    el('.prod-card[data-product="'+p.id+'"]').classList.toggle('prod-disabled', !included);
+
+    if(included && totalProduto > 0){
+      totalRecorrente += totalProduto;
+      breakdown.push({label:p.nome, valor:totalProduto, tipo:'recorrente'});
+    }
+  });
+
+  ADICIONAIS.forEach(function(a){
+    var valorEl = el('.valor-input[data-row="'+a.id+'"]');
+    var qtdEl = el('.qtde-input[data-row="'+a.id+'"]');
+    var valor = parseBR(valorEl.value);
+    var qtd = parseQtd(qtdEl.value);
+    var lt = valor * qtd;
+    el('.line-total[data-row="'+a.id+'"]').textContent = formatBR(lt);
+    if(a.tipo === 'recorrente'){ totalRecorrente += lt; } else { totalPontual += lt; }
+    if(lt > 0){ breakdown.push({label:a.label, valor:lt, tipo:a.tipo}); }
+  });
+
+  el('#sumRecorrente').textContent = 'R$ ' + formatBR(totalRecorrente);
+  el('#sumPontual').textContent = 'R$ ' + formatBR(totalPontual);
+  el('#sumGeral').textContent = 'R$ ' + formatBR(totalRecorrente + totalPontual);
+
+  lastBreakdown = breakdown;
+  lastTotals = {recorrente:totalRecorrente, pontual:totalPontual};
+}
+var lastTotals = {recorrente:0, pontual:0};
+
+/* ---------- FROTA — PREENCHIMENTO RÁPIDO ---------- */
+function aplicarFrota(){
+  var veiculos = el('#fleetVeiculos').value;
+  var viagens = el('#fleetViagens').value;
+  var usuarios = el('#fleetUsuarios').value;
+
+  PRODUCTS.forEach(function(p){
+    var ff = p.fleetFields || {};
+    (ff.veiculos||[]).forEach(function(rowId){ setQtd(rowId, veiculos); });
+    (ff.viagens||[]).forEach(function(rowId){ setQtd(rowId, viagens); });
+    (ff.usuarios||[]).forEach(function(rowId){ setQtd(rowId, usuarios); });
+  });
+  ADICIONAIS.forEach(function(a){
+    if(a.fleetFields && a.fleetFields.veiculos){ setQtd(a.id, veiculos); }
+  });
+  recalcAll();
+  showToast('Quantidades preenchidas com base na frota informada.');
+}
+function setQtd(rowId, value){
+  if(value === '' || value === undefined || value === null) return;
+  var qEl = el('.qtde-input[data-row="'+rowId+'"]');
+  if(qEl && !qEl.readOnly) qEl.value = parseQtd(value);
+}
+
+/* ---------- AÇÕES ---------- */
+function showToast(msg){
+  var t = el('#toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(showToast._tid);
+  showToast._tid = setTimeout(function(){ t.classList.remove('show'); }, 2600);
+}
+
+function copiarResumo(){
+  var nome = el('#cliNome').value.trim() || '(cliente não informado)';
+  var cnpj = el('#cliCnpj').value.trim();
+  var vendedor = el('#cliVendedor').value.trim();
+  var hoje = new Date().toLocaleDateString('pt-BR');
+
+  var linhas = [];
+  linhas.push('ORÇAMENTO — ATLAS GR');
+  linhas.push('Cliente: ' + nome + (cnpj ? ' — CNPJ: ' + cnpj : ''));
+  if(vendedor) linhas.push('Responsável comercial: ' + vendedor);
+  linhas.push('Data: ' + hoje);
+  linhas.push('');
+  if(lastBreakdown.length === 0){
+    linhas.push('Nenhum item com quantidade informada.');
+  } else {
+    lastBreakdown.forEach(function(b){
+      linhas.push('- ' + b.label + ' (' + (b.tipo === 'recorrente' ? 'mensal' : 'pontual') + '): R$ ' + formatBR(b.valor));
+    });
+  }
+  linhas.push('');
+  linhas.push('TOTAL MENSAL RECORRENTE: R$ ' + formatBR(lastTotals.recorrente));
+  linhas.push('TOTAL DE VALORES PONTUAIS: R$ ' + formatBR(lastTotals.pontual));
+  linhas.push('');
+  linhas.push('Valores de referência interna, sujeitos à validação da equipe comercial e às condições gerais do contrato Atlas GR.');
+
+  var texto = linhas.join('\n');
+
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(texto).then(function(){
+      showToast('Resumo copiado para a área de transferência.');
+    }).catch(function(){
+      window.prompt('Copie o resumo abaixo:', texto);
+    });
+  } else {
+    window.prompt('Copie o resumo abaixo:', texto);
+  }
+}
+
+function limparTudo(){
+  if(!window.confirm('Isso vai limpar todos os campos e voltar aos valores padrão. Deseja continuar?')) return;
+  window.location.reload();
+}
+
+/* ---------- INIT ---------- */
+document.addEventListener('DOMContentLoaded', function(){
+  renderPlanos();
+  renderProducts();
+  renderAdicionais();
+  recalcAll();
+
+  var params = new URLSearchParams(window.location.search);
+  if(params.get('nome')) el('#cliNome').value = params.get('nome');
+  if(params.get('cnpj')) el('#cliCnpj').value = params.get('cnpj');
+
+  el('#calcRoot').addEventListener('input', function(e){
+    if(e.target.classList.contains('valor-input') || e.target.classList.contains('qtde-input') || e.target.classList.contains('min-input')){
+      recalcAll();
+    }
+  });
+  el('#calcRoot').addEventListener('change', function(e){
+    if(e.target.classList.contains('prod-include')) recalcAll();
+  });
+
+  el('#btnAplicarFrota').addEventListener('click', aplicarFrota);
+  el('#btnLimpar').addEventListener('click', limparTudo);
+  el('#btnCopiar').addEventListener('click', copiarResumo);
+  el('#btnImprimir').addEventListener('click', function(){ window.print(); });
+});
+</script>
+</body>
+</html>

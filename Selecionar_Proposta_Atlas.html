@@ -66,6 +66,12 @@ body{
   transition:background .15s,transform .15s;
 }
 .hub-open-btn:hover{background:#e04710;transform:translateY(-1px);}
+.hub-calc-btn{
+  width:100%;background:#fff;color:var(--atlas-dark);border:1.6px solid var(--atlas-dark);border-radius:8px;
+  padding:12px;font-size:13px;font-weight:800;letter-spacing:.3px;cursor:pointer;margin-top:10px;
+  transition:background .15s,transform .15s;
+}
+.hub-calc-btn:hover{background:#f4f2f1;transform:translateY(-1px);}
 .hub-hint{font-size:11px;color:#999;margin-top:9px;text-align:center;}
 </style>
 </head>
@@ -105,6 +111,8 @@ body{
     </div>
     <button class="hub-open-btn" onclick="abrirProposta()">Abrir Proposta</button>
     <div class="hub-hint">Abre em uma nova aba, já com os dados preenchidos</div>
+    <button class="hub-calc-btn" onclick="abrirCalculadora()">Calculadora de Precificação</button>
+    <div class="hub-hint">Monte o orçamento antes de gerar a proposta</div>
   </div>
 </div>
 
@@ -143,6 +151,16 @@ function abrirProposta(){
     sessionStorage.removeItem('atlasLogoDataUrl');
   }
   var url = arquivo + '?';
+  var qs = [];
+  if(nome) qs.push('nome=' + encodeURIComponent(nome));
+  if(cnpj) qs.push('cnpj=' + encodeURIComponent(cnpj));
+  url += qs.join('&');
+  window.open(url, '_blank');
+}
+function abrirCalculadora(){
+  var nome = document.getElementById('hubNome').value.trim();
+  var cnpj = document.getElementById('hubCnpj').value.trim();
+  var url = 'Calculadora_Precificacao_Atlas.html?';
   var qs = [];
   if(nome) qs.push('nome=' + encodeURIComponent(nome));
   if(cnpj) qs.push('cnpj=' + encodeURIComponent(cnpj));
